@@ -1,6 +1,6 @@
 {
-  "name": "rho",
-  "version": "0.0.3",
+  "name": "@chromatic-systems/rho",
+  "version": "0.0.5",
   "description": "peer-to-peer web dev",
   "type": "module",
   "bin": "src/start.js",
@@ -27,12 +27,12 @@
     "playwright": "^1.25.1",
     "random-access-memory": "^5.0.0",
     "three": "^0.144.0",
-    "urlpattern-polyfill": "^5.0.6"
+    "urlpattern-polyfill": "^5.0.6",
+    "undici": "^5.9.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.25.1",
     "esbuild": "^0.15.6",
-    "nodemon": "^2.0.19",
-    "undici": "^5.9.1"
+    "nodemon": "^2.0.19"
   }
 }

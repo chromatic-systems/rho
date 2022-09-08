@@ -3,6 +3,7 @@
 import Http from "./http.js";
 import * as file from "../src/file.js";
 import SymbolDB from "../src/symbol.js";
+import {log, logLevels as ll} from "../src/log.js";
 
 // EXTERNAL DEPENDENCIES ========================
 import { fileURLToPath } from "node:url";
@@ -18,8 +19,8 @@ const PORT = parseInt(PORTSTRING);
 const PUBLIC_PATH = join(__dirname, "../public");
 const BASE_URL = `http://localhost:${PORT}`;
 
-console.info(`MODE: ${MODE}`);
-console.info(`PORT: ${PORT}`);
+log(ll.info ,"START:", `MODE: ${MODE}`);
+log(ll.info, "START:", `PORT: ${PORT}`);
 
 if (PUBKEY) console.log(`PUBKEY: ${PUBKEY}`);
 
@@ -27,7 +28,8 @@ if (PUBKEY) console.log(`PUBKEY: ${PUBKEY}`);
 // START THE DATABASE
 // ========================================================
 const db = new SymbolDB({ mem: STORAGE_TYPE, mode: MODE, pubkey: PUBKEY})
-await db.startDB();
+const {pubkey} = await db.startDB();
+log(ll.info, "START:", `pubkey: ${pubkey}`);
 
 // ========================================================
 // START THE HTTP SERVER
