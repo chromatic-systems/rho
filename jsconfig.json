@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "moduleResolution":"Node",
+    "module": "ESNext",
+    "target": "ES2017",
+    "checkJs": true
+  },
+  "include": ["test/**/*", "src/**/*", "archive/symbol.bak.js"],
+  "exclude": ["coverage","node_modules"]
+}

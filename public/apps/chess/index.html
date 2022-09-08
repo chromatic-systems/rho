@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/main.css" />
+    <link rel="icon" type="image/png" href="/favicon.ico" />
+    <script type="module" src="/chess/chess.js"></script>
+    <script type="module" src="/nav-bar/nav-bar.js"></script>
+    <title>Chromatic</title>
+    <style>
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .row {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .cell {
+        width: max(min(calc((100vw - 100px) / 8), calc((100vh - 100px) / 8)),45px);
+        height: max(min(calc((100vw - 100px) / 8), calc((100vh - 100px) / 8)),45px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .cell:hover {
+        border: 2px solid var(--color-focus);
+      }
+
+      .bg-light {
+        background-color: rgba(246, 215, 193, 0.634);
+      }
+
+      .bg-dark {
+        background-color: rgba(132, 92, 67, 0.722);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div id="8" class="row">
+        <div id="a8" class="cell bg-light">
+          <chess-piece data-type="whiterook"></chess-piece>
+        </div>
+        <div id="b8" class="cell bg-dark">
+          <chess-piece data-type="whiteknight"></chess-piece>
+        </div>
+        <div id="c8" class="cell bg-light">
+          <chess-piece data-type="whitebishop"></chess-piece>
+        </div>
+        <div id="d8" class="cell bg-dark">
+          <chess-piece data-type="whiteking"></chess-piece>
+        </div>
+        <div id="e8" class="cell bg-light">
+          <chess-piece data-type="whitequeen"></chess-piece>
+        </div>
+        <div id="f8" class="cell bg-dark">
+          <chess-piece data-type="whitebishop"></chess-piece>
+        </div>
+        <div id="g8" class="cell bg-light">
+          <chess-piece data-type="whiteknight"></chess-piece>
+        </div>
+        <div id="h8" class="cell bg-dark">
+          <chess-piece data-type="whiterook"></chess-piece>
+        </div>
+      </div>
+      <div id="7" class="row">
+        <div id="a7" class="cell bg-dark">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="b7" class="cell bg-light">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="c7" class="cell bg-dark">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="d7" class="cell bg-light">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="e7" class="cell bg-dark">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="f7" class="cell bg-light">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="g7" class="cell bg-dark">   
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+        <div id="h7" class="cell bg-light">
+          <chess-piece data-type="whitepawn"></chess-piece>
+        </div>
+      </div>
+      <div id="6" class="row">
+        <div id="a6" class="cell bg-light">
+        </div>
+        <div  id="b6" class="cell bg-dark"></div>
+        <div  id="c6" class="cell bg-light"></div>
+        <div  id="d6" class="cell bg-dark"></div>
+        <div  id="e6" class="cell bg-light"></div>
+        <div  id="f6" class="cell bg-dark"></div>
+        <div  id="g6" class="cell bg-light"></div>
+        <div  id="h6" class="cell bg-dark"></div>
+      </div>
+      <div id="5" class="row">
+        <div id="a5" class="cell bg-dark"></div>
+        <div id="b5" class="cell bg-light"></div>
+        <div id="c5" class="cell bg-dark"></div>
+        <div id="d5" class="cell bg-light"></div>
+        <div id="e5" class="cell bg-dark"></div>
+        <div id="f5" class="cell bg-light"></div>
+        <div id="g5" class="cell bg-dark"></div>
+        <div id="h5" class="cell bg-light"></div>
+      </div>
+      <div id="4" class="row">
+        <div id="a4" class="cell bg-light"></div>
+        <div id="b4" class="cell bg-dark"></div>
+        <div id="c4" class="cell bg-light"></div>
+        <div id="d4" class="cell bg-dark"></div>
+        <div id="e4" class="cell bg-light"></div>
+        <div id="f4" class="cell bg-dark"></div>
+        <div id="g4" class="cell bg-light"></div>
+        <div id="h4" class="cell bg-dark"></div>
+      </div>
+      <div id="3" class="row">
+        <div id="a3" class="cell bg-dark"></div>
+        <div id="b3" class="cell bg-light"></div>
+        <div id="c3" class="cell bg-dark"></div>
+        <div id="d3" class="cell bg-light"></div>
+        <div id="e3" class="cell bg-dark"></div>
+        <div id="f3" class="cell bg-light"></div>
+        <div id="g3" class="cell bg-dark"></div>
+        <div id="h3" class="cell bg-light"></div>
+      </div>
+      <div id="2" class="row">
+        <div id="a2" class="cell bg-light">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="b2" class="cell bg-dark">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="c2" class="cell bg-light">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="d2" class="cell bg-dark">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="e2" class="cell bg-light">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="f2" class="cell bg-dark">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="g2" class="cell bg-light">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+        <div id="h2" class="cell bg-dark">
+          <chess-piece data-type="blackpawn"></chess-piece>
+        </div>
+      </div>
+      <div id="1" class="row">
+        <div id="a1" class="cell bg-dark">
+          <chess-piece data-type="blackrook"></chess-piece>
+        </div>
+        <div id="b1" class="cell bg-light">
+          <chess-piece data-type="blackknight"></chess-piece>
+        </div>
+        <div id="c1" class="cell bg-dark">
+          <chess-piece data-type="blackbishop"></chess-piece>
+        </div>
+        <div id="d1" class="cell bg-light">
+          <chess-piece data-type="blackking"></chess-piece>
+        </div>
+        <div id="e1" class="cell bg-dark">
+          <chess-piece data-type="blackqueen"></chess-piece>
+        </div>
+        <div id="f1" class="cell bg-light">
+          <chess-piece data-type="blackbishop"></chess-piece>
+        </div>
+        <div id="g1" class="cell bg-dark">
+          <chess-piece data-type="blackknight"></chess-piece>
+        </div>
+        <div id="h1" class="cell bg-light">
+          <chess-piece data-type="blackrook"></chess-piece>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p><span>Selected:</span><span id="selected">none</span></p>
+      <h2>Chess:04</h2>
+      <nav-bar></nav-bar>
+    </footer>
+    <script>
+      // =============================================
+      // SETUP CELL TRACKING
+      // =============================================
+
+      let selectedCell = null;
+      let targetCell = null
+
+      // a function to set the selected cell innerHTML
+      function setSelectedCell(cell_id) {
+        selectedCell = cell_id;
+        document.getElementById('selected').innerHTML = cell_id
+      }
+
+
+
+      // get the selected cell by id
+      function getCell(id) {
+        return document.getElementById(id);
+      }
+
+      // =============================================
+      // SETUP EVENT LISTENERS
+      // =============================================
+
+      // select all elemets with the .cell class
+      const cells = document.querySelectorAll('.cell');
+      // for all cells add a click event listener and get the id of the target element
+      cells.forEach(cell => {
+        cell.addEventListener('click', e => {
+          const id = e.currentTarget.id;
+
+          // if the selected cell is not null set target cell to the id of the clicked cell
+          if (selectedCell !== null) {
+            // get the cell by id
+            const selectedCellHtml = getCell(selectedCell);
+            // does the selected cell have a piece?
+            if (selectedCellHtml.innerHTML !== '') {
+              // get the first child of the target cell
+              const selectedPiece = selectedCellHtml.firstElementChild;
+              const targetClone = selectedPiece.cloneNode(true)
+              // set innerHTML of the target cell to the cloned piece
+              getCell(id).innerHTML = targetClone.outerHTML;
+              // remove child from selected cell
+              selectedCellHtml.innerHTML = '';
+            }
+            selectedCell = null;
+            document.getElementById('selected').innerHTML = ""
+  
+          } else {
+            // if the selected cell is null set selected cell to the id of the clicked cell
+            setSelectedCell(id);
+          }
+
+        });
+      });
+    </script>
+  </body>     
+</html>

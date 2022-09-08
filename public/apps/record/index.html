@@ -1,0 +1,119 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chromascope</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/cs.css" />
+    <link rel="icon" type="image/png" href="/favicon.ico" />
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+    <style>
+      main {
+        gap: 10px;
+        display: flex;
+        flex-direction: column;
+        max-width: 600px;
+      }
+      #recording {
+        border: 1px soild var(--color-background);
+        height: 200px;
+        max-height: 200px;
+      }
+      #preview {
+        border: 1px soild var(--color-background);
+        height: 200px;
+        max-height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <button id="recordstateButton" class="button">Start</button>
+      <video id="preview" autoplay muted></video>
+      <video id="recording" controls></video>
+      <a id="downloadButton" class="button"> Download </a>
+      <div id="log"></div>
+    </main>
+    <footer>
+      <nav-bar data-key="record"></nav-bar>
+      <h2>Media:11</h2>
+    </footer>
+    <canvas id="stage"></canvas>
+    <script>
+      let preview = document.getElementById("preview");
+      let recording = document.getElementById("recording");
+      let stateButton = document.getElementById("recordstateButton");
+      let downloadButton = document.getElementById("downloadButton");
+      let logElement = document.getElementById("log");
+      let recordingTimeMS = 5000;
+      stateButton.innerHTML = "Start";
+
+
+      function log(msg) {
+        logElement.innerHTML = msg + "\n";
+      }
+      function wait(delayInMS) {
+        return new Promise((resolve) => setTimeout(resolve, delayInMS));
+      }
+
+      function startRecording(stream, lengthInMS) {
+        let recorder = new MediaRecorder(stream);
+        let data = [];
+
+        recorder.ondataavailable = (event) => data.push(event.data);
+        recorder.start();
+
+        let stopped = new Promise((resolve, reject) => {
+          recorder.onstop = resolve;
+          recorder.onerror = (event) => reject(event.name);
+        });
+
+        let recorded = wait(lengthInMS).then(
+          () => recorder.state == "recording" && recorder.stop()
+        );
+
+        return Promise.all([stopped, recorded]).then(() => data);
+      }
+
+      function stop(stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+
+      async function record() {
+        if (stateButton.innerHTML === "Stop") {
+          stop(preview.srcObject);
+          stateButton.innerHTML = "Start";
+          return;
+        }
+
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+
+        stateButton.innerHTML = "New";
+
+        preview.srcObject = stream;
+        downloadButton.href = stream;
+        preview.captureStream =
+          preview.captureStream || preview.mozCaptureStream;
+        //await preview.onplaying();
+        //return new Promise((resolve) => ( = resolve));
+        const recordedChunks = await startRecording(
+          preview.captureStream(),
+          recordingTimeMS
+        );
+
+        let recordedBlob = new Blob(recordedChunks, {
+          type: "video/webm",
+        });
+        recording.src = URL.createObjectURL(recordedBlob);
+        downloadButton.href = recording.src;
+        downloadButton.download = "RecordedVideo.webm";
+
+        log(Math.floor(recordedBlob.size / 1024) + "kb " + recordedBlob.type);
+      }
+
+      stateButton.onclick = () => record();
+    </script>
+  </body>
+</html>

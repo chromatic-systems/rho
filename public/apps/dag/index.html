@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/k/favicon.ico" />
+    <link rel="stylesheet" href="/k/css/cs.css" />
+    <script type="module" src="/k/webcom/nav-bar/nav-bar.js"></script>
+    <title>dag</title>
+    <style>
+      @media only screen and (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          /* --primary: #f69902;
+          --line: #666;
+          --primary-hover: #ce9178;
+          --primary-focus: #ce9178;
+          --primary-inverse: #fff;
+          --background-color: black;
+          --color-1: #0070f3;
+          --color-2: #f69902;
+          --color-3: #ff4800;
+          --color-text: #ddd;
+          --color-dim: #444;
+          --color-background: black; */
+
+          --color-aware: #408fea;
+          --color-focus: #f69902;
+          --color-alert: #ff4800;
+          --color-text: #ddd;
+          --color-subtext: #bbb;
+          --color-border: #ddd;
+          --color-shadow: #444;
+          --color-background: black;
+          --gradient: linear-gradient(0deg, #dab58e, #e04829);
+        }
+      }
+
+      body {
+        background-color: var(--color-background);
+        color: white;
+      }
+      #stage {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main></main>
+    <footer>
+      <nav-bar data-key="dag"></nav-bar>
+      <h2>DAG:01</h2>
+    </footer>
+    <div id="stage"></div>
+    <script type="module" src="/k/apps/dag/dag.bun.js"></script>
+  </body>
+</html>

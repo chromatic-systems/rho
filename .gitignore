@@ -1,0 +1,4 @@
+db-write
+db-read
+node_modules
+.DS_Store

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css/cs.css" />
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+    <title>IFC</title>
+    <style>
+      #stage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        /* pointer-events: none; */
+        z-index: 1;
+      }
+      input {
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="file" name="load" id="file-input" />
+    <main></main>
+    <footer>
+      <h2>CAD:08</h2>
+      <nav-bar data-key="ifc"></nav-bar>
+    </footer>
+    <canvas id="stage"></canvas>
+    <script src="/apps/ifc/ifc.bun.js"></script>
+  </body>
+</html>

@@ -1,0 +1,75 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chromascope</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/cs.css" />
+    <link rel="icon" type="image/png" href="/favicon.ico" />
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+    <style>
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .file {
+        opacity: 0;
+        width: 0.1px;
+        height: 0.1px;
+        position: absolute;
+      }
+      .file-input{
+        display: block;
+        position: relative;
+        width: 200px;
+        height: 50px;
+        border-radius: 25px;
+        background: linear-gradient(40deg, #ff6ec4, #7873f5);
+        box-shadow: 0 4px 7px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s ease-out;
+      }
+      button {
+        display: block;
+        position: relative;
+        width: 200px;
+        height: 50px;
+        border-radius: 25px;
+        background: linear-gradient(40deg, #c76eff, #8400ff);
+        box-shadow: 0 4px 7px rgba(0, 0, 0, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.2s ease-out;
+        border: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <form enctype="multipart/form-data" method="POST" action="/api/file">
+        <label for="file" class="file-input"> Choose a file </label>
+        <input class="file" id="file" type="file" name="file" />
+        <input name="mimetype" placeholder="image/png" />
+        <input name="key" placeholder="key-x" />
+        <input id="password" name="password" type="password" placeholder="password" />
+        <button id="upload" type="submit" value="Upload">Upload</button>
+      </form>
+    </main>
+    <footer>
+      <nav-bar data-key="File"></nav-bar>
+      <h2>Upload:05</h2>
+    </footer>
+  </body>
+</html>
+<!-- application/wasm -->

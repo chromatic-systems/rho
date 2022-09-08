@@ -1,0 +1,38 @@
+{
+  "name": "hyper-symbols",
+  "version": "0.0.2",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "bin": "src/start.js",
+  "scripts": {
+    "start": "nodemon -q --config config/start_task.json src/start.js 8080 ram write",
+    "start:i": "nodemon -q --inspect --config config/start_task.json src/start.js 8080 ram write",
+    "test": "nodemon -q --config config/html_task.json test/start.test.js",
+    "test:i": "nodemon -q --inspect --config config/html_task.json test/start.test.js"
+  },
+  "author": "timcash",
+  "license": "ISC",
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "chalk": "^5.0.1",
+    "chokidar": "^3.5.3",
+    "corestore": "^6.0.4",
+    "esbuild": "^0.15.6",
+    "fs-readdir-recursive": "^1.1.0",
+    "glicol": "^0.3.8",
+    "hyperbee": "^2.0.0",
+    "hypercore": "^10.2.1",
+    "hyperswarm": "^4.2.0",
+    "openai": "^3.0.0",
+    "playwright": "^1.25.1",
+    "random-access-memory": "^5.0.0",
+    "urlpattern-polyfill": "^5.0.6"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.25.1",
+    "brittle": "^3.1.0",
+    "nodemon": "^2.0.19",
+    "undici": "^5.9.1"
+  }
+}

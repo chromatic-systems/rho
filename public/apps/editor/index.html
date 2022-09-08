@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="/css/cs.css" />
+    <script type="module" src="/webcom/edit/edit.bun.js"></script>
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+
+    <title>edit</title>
+  </head>
+  <body>
+    <main>
+      <edit-code
+        tabindex="1"
+        id="editor"
+        data-key="${key}"
+        data-title="${key}"
+      ></edit-code>
+    </main>
+    <footer>
+
+    <input
+    id="password"
+    type="password"
+    name="password"
+    placeholder="password"
+    value=""
+    />
+    <p><span id="heart">&#x1F49C;</span></p>
+    <nav-bar data-key="edit"></nav-bar>
+    <h2>Edit:02</h2>
+    </footer>
+    <script>
+      window.addEventListener("load", () => {
+        // focus the editor
+        document.getElementById("editor").focus();
+      });
+    </script>
+  </body>
+</html>

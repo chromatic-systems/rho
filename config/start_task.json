@@ -1,0 +1,13 @@
+{
+  "delay": 250,
+  "ext": "js",
+  "ignore": [
+    "./coverage",
+    "./config",
+    "./public",
+    "./sounds",
+    "./database",
+    "./test",
+    "./node_modules"
+  ]
+}

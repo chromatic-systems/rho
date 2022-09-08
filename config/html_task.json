@@ -1,0 +1,13 @@
+{
+  "delay": 250,
+  "ext": "js,json,html",
+  "ignore": [
+    "./coverage",
+    "./config",
+    "test/screenshots",
+    "test/fixtures",
+    "test/logs",
+    "test/pages",
+    "public"
+  ]
+}

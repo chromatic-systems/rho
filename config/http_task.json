@@ -1,0 +1,12 @@
+{
+  "ext": "js,json",
+  "ignore": [
+    "./coverage",
+    "./config",
+    "./public",
+    "test/screenshots",
+    "test/fixtures",
+    "test/logs",
+    "test/pages"
+  ]
+}

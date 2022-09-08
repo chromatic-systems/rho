@@ -1,0 +1,189 @@
+/*** The new CSS Reset - version 1.4.4 (last updated 22.12.2021) ***/
+/*
+    Remove all the styles of the "User-Agent-Stylesheet", except for the 'display' property
+    - The "symbol *" part is to solve Firefox SVG sprite bug
+ */
+*:where(:not(iframe, canvas, img, svg, video):not(svg *, symbol *)) {
+  all: unset;
+  display: revert;
+}
+
+/* Preferred box-sizing value */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove list styles (bullets/numbers) */
+ol,
+ul,
+menu {
+  list-style: none;
+}
+
+/* For images to not be able to exceed their container */
+img {
+  max-width: 100%;
+}
+
+/* removes spacing between cells in tables */
+table {
+  border-collapse: collapse;
+}
+
+/* revert the 'white-space' property for textarea elements on Safari */
+textarea {
+  white-space: revert;
+}
+
+/* fix the feature of 'hidden' attribute.
+      display:revert; revert to element instead of attribute */
+:where([hidden]) {
+  display: none;
+}
+
+/* revert for bug in Chromium browsers
+      - fix for the content editable attribute will work properly. */
+:where([contenteditable]) {
+  -moz-user-modify: read-write;
+  -webkit-user-modify: read-write;
+  overflow-wrap: break-word;
+  -webkit-line-break: after-white-space;
+}
+
+/* apply back the draggable feature - exist only in Chromium and Safari */
+:where([draggable="true"]) {
+  -webkit-user-drag: element;
+}
+
+/* color vars */
+:root {
+  --color-aware: #408fea;
+  --color-focus: #f69902;
+  --color-alert: #ff4800;
+  --color-text: #ddd;
+  --color-subtext: #bbb;
+  --color-border: #ddd;
+  --color-shadow: #444;
+  --color-background: black;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: var(--color-text);
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  background-color: var(--color-background);
+  /* center the content */
+  box-sizing: border-box;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+h2 {
+  font-size: 1.5em;
+}
+
+a {
+  color: var(--color-aware);
+  /* pointer */
+  cursor: pointer;
+}
+
+p {
+  color: var(--color-subtext);
+}
+
+button {
+  /* pointer */
+  cursor: pointer;
+  border: 1px solid white;
+  padding: 20px;
+}
+
+/* on button hover change background to skyblue */
+button:hover {
+  background-color: var(--color-aware);
+  color: var(--color-background);
+}
+
+input {
+  padding: 15px;
+  border: 1px solid var(--color-border);
+}
+
+textarea {
+  flex: auto;
+
+  padding: 15px;
+  border: 1px solid var(--color-border);
+  box-sizing: border-box;
+}
+form {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 1px;
+  background: var(--color-main);
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type="range"]:focus {
+  outline: none; /* Removes the blue border. You should probably do some kind of focus styling for accessibility reasons though. */
+}
+
+input[type="range"]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  /* Hides the slider so custom styles can be added */
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+/* Special styling for WebKit/Blink */
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 1px solid var(--color-background);
+  height: 16px;
+  width: 16px;
+  background: var(--color-background);
+  cursor: pointer;
+}
+
+/* All the same stuff for Firefox */
+input[type="range"]::-moz-range-thumb {
+  border: 1px solid var(--color-background);
+  height: 16px;
+  width: 16px;
+  background: var(--color-main);
+  cursor: pointer;
+}

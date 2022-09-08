@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
+    <title>glicol</title>
+
+    <style>
+      /*** The new CSS Reset - version 1.4.4 (last updated 22.12.2021) ***/
+      *:where(:not(iframe, canvas, img, svg, video):not(svg *, symbol *)) {
+        all: unset;
+        display: revert;
+      }
+
+      /* Preferred box-sizing value */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      /* Remove list styles (bullets/numbers) */
+      ol,
+      ul,
+      menu {
+        list-style: none;
+      }
+
+      /* For images to not be able to exceed their container */
+      img {
+        max-width: 100%;
+      }
+
+      /* removes spacing between cells in tables */
+      table {
+        border-collapse: collapse;
+      }
+
+      /* revert the 'white-space' property for textarea elements on Safari */
+      textarea {
+        white-space: revert;
+      }
+
+      /* fix the feature of 'hidden' attribute.
+      display:revert; revert to element instead of attribute */
+      :where([hidden]) {
+        display: none;
+      }
+
+      /* revert for bug in Chromium browsers
+      - fix for the content editable attribute will work properly. */
+      :where([contenteditable]) {
+        -moz-user-modify: read-write;
+        -webkit-user-modify: read-write;
+        overflow-wrap: break-word;
+        -webkit-line-break: after-white-space;
+      }
+
+      /* apply back the draggable feature - exist only in Chromium and Safari */
+      :where([draggable="true"]) {
+        -webkit-user-drag: element;
+      }
+
+      /* color vars */
+      :root {
+        --color-aware: #408fea;
+        --color-focus: #f69902;
+        --color-alert: #ff4800;
+        --color-text: #ddd;
+        --color-subtext: #bbb;
+        --color-border: #ddd;
+        --color-shadow: #444;
+        --color-background: #000;
+        --gradient: linear-gradient(0deg, #dab58e, #e04829, #ffffff);
+      }
+
+      html {
+        height: fill-available;
+        height: -webkit-fill-available;
+      }
+
+      body {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        color: var(--color-text);
+        background-color: var(--color-background);
+        box-sizing: border-box;
+
+        min-height: 100vh;
+        min-height: fill-available;
+        min-height: -webkit-fill-available;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        margin: 0;
+
+        align-items: center;
+      }
+
+      article {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+      }
+
+      main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      footer {
+        flex: 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      h2 {
+        font-size: 1.5em;
+      }
+
+      img {
+        max-height: 60%;
+        width: auto;
+        max-width: 360px;
+      }
+
+      p {
+        line-height: 1.4em;
+        color: var(--color-subtext);
+      }
+
+      a {
+        cursor: pointer;
+        padding: 20px;
+        border-radius: 0px;
+        text-align: center;
+        font-size: 1.3em;
+        /* transition 1 sec */
+        transition: all 1s;
+        outline: var(--color-border) solid 1px;
+        background-image: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 100% 200%;
+        background-position-y: 100%;
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      a:hover {
+        background-color: var(--color-focus);
+        color: var(--color-background);
+      }
+
+      a:focus {
+        background-color: var(--color-focus);
+        color: var(--color-background);
+        outline: 2px solid white;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 20px;
+        background-color: var(--color-alert);
+        border-radius: 15px;
+        text-align: center;
+        font-size: 1.3em;
+        /* transition 1 sec */
+        transition: all 1s;
+      }
+
+      button:hover {
+        background-color: var(--color-focus);
+        color: var(--color-background);
+      }
+
+      button:focus {
+        background-color: var(--color-focus);
+        color: var(--color-background);
+        outline: 2px solid white;
+      }
+
+      textarea {
+        flex: 1;
+        padding: 15px;
+        border: 1px solid var(--color-border);
+      }
+
+      textarea:focus {
+        border: 1px solid var(--color-focus);
+      }
+
+      input {
+        padding: 15px;
+        border: 1px solid var(--color-border);
+      }
+
+      input:focus {
+        border: 1px solid var(--color-focus);
+      }
+
+      form {
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+      }
+
+      #stage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+      }
+
+      .center {
+        align-items: center;
+        justify-content: center;
+      }
+
+      .text-gradient {
+        font-weight: 900;
+        background-image: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 100% 200%;
+        background-position-y: 100%;
+        border-radius: 0.4rem;
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          background-position-y: 0%;
+        }
+        50% {
+          background-position-y: 80%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <article>
+      <h1>Hello World</h1>
+      <main>
+        <button id="play">Play</button>
+      </main>
+      <footer>
+        <a href="/">Home</a>
+      </footer>
+    </article>
+    <!-- <script type="module" src="index.bun.js"></script> -->
+    <script type="module" src="./audio.bun.js"></script>
+  </body>
+</html>

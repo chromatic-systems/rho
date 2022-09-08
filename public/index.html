@@ -1,0 +1,68 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Chromascope</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="/css/cs.css" />
+    <link rel="icon" type="image/png" href="/favicon.ico" />
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+    <!-- <script type="module" src="load_file/load-file.js"></script> -->
+    <style>
+      canvas {
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-crisp-edges;
+        image-rendering: crisp-edges;
+      }
+      article {
+        padding: 15px;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      h2 {
+        font-family: Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <article>
+      <h2>Chromatic.Systems</h2>
+      <main>
+        <canvas id="stage_inline"></canvas>
+      </main>
+      <footer>
+        <p id="turn">1</p>
+        <nav-bar data-key="chromascope"></nav-bar>
+      </footer>
+    </article>
+    <article>
+      <main class="center">
+        <h2>
+          A School for Computational
+          <span class="text-gradient">Media</span>
+        </h2>
+      </main>
+    </article>
+    <article>
+      <main class="center">
+        <h2>
+          Created with Love by
+          <span class="text-gradient">Pati</span>
+          and
+          <span class="text-gradient">Tim</span>
+        </h2>
+      </main>
+    </article>
+    <script type="module">
+      import scope  from "/js/chromascope.js";
+      scope("stage_inline", "turn");
+    </script>
+  </body>
+</html>
