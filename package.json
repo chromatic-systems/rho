@@ -21,12 +21,14 @@
     "esbuild": "^0.15.6",
     "fs-readdir-recursive": "^1.1.0",
     "glicol": "^0.3.8",
+    "globe.gl": "^2.26.5",
     "hyperbee": "^2.0.0",
     "hypercore": "^10.2.1",
     "hyperswarm": "^4.2.0",
     "openai": "^3.0.0",
     "playwright": "^1.25.1",
     "random-access-memory": "^5.0.0",
+    "three": "^0.144.0",
     "urlpattern-polyfill": "^5.0.6"
   },
   "devDependencies": {
