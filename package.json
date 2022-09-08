@@ -1,11 +1,11 @@
 {
   "name": "rho",
   "version": "0.0.3",
-  "description": "",
+  "description": "peer-to-peer web dev",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "rho": "src/start.js"
+    "https://github.com/chromatic-systems/rho": "src/start.js"
   },
   "scripts": {
     "start": "nodemon -q --config config/start_task.json src/start.js 8080 ram write",
