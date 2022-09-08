@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 // INTERNAL DEPENDENCIES ========================
 import Http from "./http.js";
 import * as file from "../src/file.js";
