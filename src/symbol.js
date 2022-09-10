@@ -8,7 +8,7 @@ const READING = "read";
 const WRITING = "write";
 
 class SymbolDB {
-  constructor({mem, mode, pubkey}) {
+  constructor({mem, mode, pubkey, swarm=false}) {
     // verify pubkey is 64 bytes
     const length = pubkey?.length ?? 0;
     if(mode === READING && length !== 64) {
@@ -17,12 +17,14 @@ class SymbolDB {
     this.mode = mode;
     this.mem = mem;
     this.pubkey = pubkey;
+    this.lastUpdated = {};
+    this.swarm = swarm;
   }
 
   async startDB() {
     let dbs;
     if (this.mode === WRITING) {
-       dbs = await writer.start(this.mem, "symbols");
+       dbs = await writer.start(this.mem, "symbols", this.swarm);
     }
     if (this.mode === READING) {
       dbs = await reader.start(this.mem, this.pubkey);
@@ -79,7 +81,19 @@ class SymbolDB {
   watch(cb) {
     const rs = this.metaDB.createHistoryStream({ live: true })
     rs.on("data", (data) => {
+
+      // add data.key to this.lastUpdated
+      if(this.lastUpdated[data.key] == null) {
+        cb(null, data);
+        this.lastUpdated[data.key] = Date.now();
+        return
+      }
+
+      // if lastUpdated is less than 1 second ago, ignore
+      if(Date.now() - this.lastUpdated[data.key] < 1000) return
+      
       cb(null, data);
+      this.lastUpdated[data.key] = Date.now();
     });
     rs.on("error", (err) => {
       log(ll.alert, "SYMBOLDB WATCH:", err);

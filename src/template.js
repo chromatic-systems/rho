@@ -5,7 +5,8 @@ function article(symbol) {
   const css = baseCss();
   const script = reloader()
   const mainElements = symbol.value.toString();
-  const links = [`<a href="/">Home</a>`];
+  // const links = [`<a href="/">Home</a>`];
+  const links = [];
   const body = mainArticleFooter(mainElements, links);
   return baseHtml(symbol.key, body, script, css);
 }
@@ -26,8 +27,8 @@ function _404(key) {
   const css = baseCss();
   const script = reloader()
   const body = mainArticleFooter("404", [
-    `<a href="/">Home</a>`,
-    `<a href="/e/${key}">Edit</a>`,
+    // `<a href="/">Home</a>`,
+    // `<a href="/e/${key}">Edit</a>`,
   ]);
   return baseHtml("404", body, script, css);
 }
@@ -54,18 +55,17 @@ import flamethrower from "/k/js/flame.js";
 flamethrower({ log: true, pageTransitions: true });
 </script>  */
 }
-function baseHtml(tile, body, script, style) {
+function baseHtml(title, body, script, style) {
   return `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
-    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
-    <title>${tile}</title>
 
+    <title>${title}</title>
     <style>
-    ${style}
+      ${style}
     </style>
   </head>
   <body>
@@ -75,6 +75,8 @@ function baseHtml(tile, body, script, style) {
     ${script}
     </script>
   </body>
+  <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
+  <script type="module" src="/webcom/edit/edit.bun.js"></script>
 </html>
 `;
 }
@@ -144,16 +146,13 @@ function editorBody({ key, meta, value }) {
   <option value="text/html">html</option>
   <option value="text/plain">text</option>
   <option value="text/javascript">javascript</option>
-  <option value="application/json">json</option>
-  <option value="text/css">css</option>
-  <option value="text/markdown">markdown</option>
   </select>
   <textarea id="message" tabindex="1" name="message" placeholder="message">${value}</textarea>
   <input tabindex="2" type="text" name="type" value="${meta.type}" />
   <footer>
+  <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
   <a href="/m/${key}">Meta</a>
   <a href="/${key}">View</a>
-  <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
   </footer>
   </article>
   <article>
@@ -162,6 +161,46 @@ function editorBody({ key, meta, value }) {
   </article>
   </form>`;
 }
+
+function editorBody2({ key, meta, value }) {
+  // button should flex grow
+  const buttonStyle = `style="flex-grow: 1;"`;
+  return `
+  <article>
+  <div class="row">
+      <select tabindex="0" name="template">
+      <option value="article">article</option>
+      <option value="text/html">html</option>
+      <option value="text/plain">text</option>
+      <option value="text/javascript">javascript</option>
+    </select>
+    <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
+  </div>
+  <main>
+  <edit-code
+  tabindex="1"
+  id="editor"
+  data-key="${key}"
+  data-title="${key}"
+  data-save-button-id="save"
+  ></edit-code>
+  </main>
+  </article>
+  <article>
+  <input tabindex="2" type="text" name="type" value="${meta.type}" />
+  <footer>
+  <a href="/m/${key}">Meta</a>
+  <a href="/${key}">View</a>
+  </footer>
+  </article>
+  <article>
+  <input tabindex="4" type="hidden" name="key" value="${key}" />
+  <a href="/n/${key}">Nav</a>
+  </article>`;
+}
+
+
+
 
 // ========================================================
 // SVG EXAMPLES
@@ -271,9 +310,7 @@ body {
   flex-direction: column;
   padding: 0;
   margin: 0;
-
   align-items: center;
-
 }
 
 article {
@@ -299,6 +336,13 @@ footer {
   gap: 15px;
 }
 
+header {
+  flex:0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
 h1 {
   font-size: 2em;
 }
@@ -313,7 +357,7 @@ img {
   max-width: 360px;
 }
 
-div {
+.row {
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -453,4 +497,5 @@ export {
   article,
   circles,
   _404,
+  editorBody2
 };

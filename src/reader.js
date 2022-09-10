@@ -3,6 +3,8 @@ import Corestore from "corestore";
 import Hyperswarm from "hyperswarm";
 import Hyperbee from "hyperbee";
 import ram from "random-access-memory";
+import {log, logLevels as ll} from "../src/log.js";
+
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 const __filename = fileURLToPath(import.meta.url);
@@ -26,7 +28,7 @@ async function start(storage, pubKey) {
 
   // Setup corestore replication
   swarm.on("connection", (connection) => {
-    // console.log("connection:", connection.publicKey.toString("hex"));
+    log(ll.info, "SWARM", "connection:", connection.publicKey.toString("hex"));
     store.replicate(connection);
   });
 

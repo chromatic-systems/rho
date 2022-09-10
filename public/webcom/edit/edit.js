@@ -36,31 +36,35 @@ class Editor extends HTMLElement {
     super();
     this.key = this.getAttribute("data-key");
     this.title = this.getAttribute("data-title");
+    this.saveButtonId = this.getAttribute("data-save-button-id");
+    this.saveButton = document.getElementById(this.saveButtonId);
 
-    const save = async () => {
-      // get password value from input
-      const password = document.getElementById("password").value;
+
+    const save = async (event) => {
+      // const password = document.getElementById("password").value;
       await fetch(`/k/${this.key}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "text/html",
-          auth: password,
+          auth: "password",
+          template: "article",
         },
-        body: this.text,
+        body: this.text
       });
-    }
+    };
+
+    this.saveButton.addEventListener("click", async () => {
+      await save();
+    });
 
     const gotoKey = async () => {
       window.location.href = `/k/${this.key}`;
-    }
-
+    };
     const saveKeymap = [
       { key: "Mod-s", run: save, preventDefault: true },
       { key: "Mod-k", run: gotoKey, preventDefault: true }
     ];
-
     this.basicSetup = [
-      // lineNumbers(),
       highlightActiveLineGutter(),
       highlightSpecialChars(),
       history(),
@@ -70,7 +74,7 @@ class Editor extends HTMLElement {
       EditorState.allowMultipleSelections.of(true),
       indentOnInput(),
       syntaxHighlighting(defaultHighlightStyle, {
-        fallback: true,
+        fallback: true
       }),
       bracketMatching(),
       closeBrackets(),
@@ -87,45 +91,42 @@ class Editor extends HTMLElement {
         ...foldKeymap,
         ...completionKeymap,
         ...lintKeymap,
-        ...saveKeymap,
-      ]),
+        ...saveKeymap
+      ])
     ];
   }
   async connectedCallback() {
     this.attachShadow({ mode: "open" });
     const response = await fetch(`/k/${this.key}`);
-    // if mimetype is html, css or js else throw error
     const mimetype = response.headers.get("content-type");
-    // match html,css or javascript or json
     const match = mimetype.match(/^(text\/plain|text\/html|text\/css|application\/javascript|application\/json)/);
     if (!match) {
       throw new Error(`mimetype:${mimetype} not supported`);
     }
-    const doc = await response.text();
 
+
+    const doc2 = await response.text();
     this.editView = new EditorView({
-      doc,
+      doc: doc2,
       extensions: [
         this.basicSetup,
-        //keymap.of([indentWithTab]),
         chroma_theme,
-        html(),
+        html()
       ],
-      parent: this.shadowRoot,
+      parent: this.shadowRoot
     });
-
     this.editView.focus();
   }
 
-  disconnectedCallback() {}
-
   get text() {
-    const iter = Array.from(this.editView.state.doc.iterLines())
-    const t = iter.join("\n");
-    return t;
+    const iter = Array.from(this.editView.state.doc.iterLines());
+    const t2 = iter.join("\n");
+    return t2;
   }
-}
 
+  disconnectedCallback() {
+  }
+};
 customElements.define("edit-code", Editor);
 
 // SIMPLE EXAMPLE OF SET GET OBSERVE and REFLECTION onto properties

@@ -38,8 +38,8 @@ async function start() {
   await test("start a browser", startBrowser);
   await test("get the index page", getIndexPage);
   await test("get a 404 for empty key", get404Page);
-  await test("edit an empty symbol", editEmptySymbol);
-  await test("open the page editor", openTheEditor);
+  await test("edit an empty symbol and verify sse reload", editEmptySymbol);
+  // await test("open the page editor", openTheEditor);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
   // await test("spawn the app", spawnApplication);
@@ -90,12 +90,13 @@ async function waitForKey({ log, ctx, expect }) {
 }
 
 // ========================================================
-// BROSER TESTS
+// BROWSER TESTS
 // ========================================================
 
 async function startBrowser({ ctx, log, expect }) {
   const { page, context, browser } = await watchBrowser.startBrowser({
     headless: true,
+    slowMo: 0
   });
   await page.evaluate(() => {
     console.info("browser logging attached");
@@ -107,7 +108,6 @@ async function startBrowser({ ctx, log, expect }) {
 
 async function getIndexPage({ ctx, log, expect }) {
   const { page } = ctx;
-  // get a random element from ctx.uploadedFiled
   const result = await page.goto(`http://localhost:8080`);
   expect(result.status(), 200);
   const result2 = await page.goto(`http://localhost:8080/css/main.css`);
@@ -117,7 +117,6 @@ async function getIndexPage({ ctx, log, expect }) {
 async function get404Page({ ctx, log, expect }) {
   const { page } = ctx;
   const randomKey = randomUUID();
-  // get a random element from ctx.uploadedFiled
   const result = await page.goto(`http://localhost:8080/k/${randomKey}`);
   expect(result.status(), 404);
 }
@@ -130,10 +129,26 @@ async function editEmptySymbol({ log, ctx, expect }) {
 
   const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
   expect(result.status(), 200, "status code is 200");
-  await fillInMessage(page, "<h2>hello world<h2>");
+
+  const editor = await page.locator("#editor")
+  await editor.focus();
+  await editor.click();
+  // press command + a
+  await page.keyboard.down("Meta");
+  await page.keyboard.press("KeyA");
+  await page.keyboard.up("Meta");
+  // delete
+  await page.keyboard.press("Delete");
+  await page.keyboard.type("<h2>hello world");
+  await page.keyboard.down("Meta");
+
+  await page.keyboard.press("Enter");
+  await page.keyboard.up("Meta");
+
+  await page.keyboard.type(`<p>${randomKey}`);
+  // await fillInMessage(page, "<h2>hello world<h2>");
   await clickSave(page);
-  const content = await page.content();
-  expect(content.includes("hello world"), true, "content includes hello world");
+  await screenshot(page, "test2");
   
   // expect the reader page to be updated via sse
   await ssePage.waitForSelector("h2");
@@ -144,7 +159,7 @@ async function openTheEditor({ log, ctx, expect }) {
   const { page } = ctx;
   const randomKey = randomUUID();
   const result = await page.goto(`http://localhost:8080/${randomKey}`);
-  // clikc the button with id="edit2
+
   await page.locator("#edit2").click();
   expect(result.status(), 200, "status code is 200");
 }

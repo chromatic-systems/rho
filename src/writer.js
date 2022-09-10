@@ -5,6 +5,8 @@ import Hyperbee from "hyperbee";
 import ram from "random-access-memory";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import {log, logLevels as ll} from "../src/log.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -16,19 +18,12 @@ let db;
 const diskPath = join(__dirname, "../db-write");
 
 // API
-async function start(storage, dbName) {
+async function start(storage, dbName, joinSwarm=false) {
   if (storage === "ram") {
     store = new Corestore(ram);
   } else {
     store = new Corestore(diskPath);
   }
-  swarm = new Hyperswarm();
-
-  // Setup corestore replication
-  swarm.on("connection", (connection) => {
-    // console.log("connection:", connection.publicKey.toString("hex"));
-    store.replicate(connection);
-  });
 
   core = store.get({ name: dbName });
 
@@ -40,6 +35,7 @@ async function start(storage, dbName) {
   });
 
   const metaDB = db.sub("meta", {
+    sep: Buffer.alloc(1),
     valueEncoding: "utf-8",
   });
 
@@ -47,10 +43,21 @@ async function start(storage, dbName) {
     valueEncoding: "binary",
   });
 
-  swarm.join(db.feed.discoveryKey, { server: true, client: false });
+  if(joinSwarm) {
+    swarm = new Hyperswarm();
+    log(ll.info, "SWARM:", "joining swarm");
+    // Setup corestore replication
+    swarm.on("connection", (connection) => {
+      log(ll.info, "SWARM:", "connection:", connection.publicKey.toString("hex"));
+      store.replicate(connection);
+    });
 
-  // Make sure we have all the connections
-  await swarm.flush();
+    swarm.join(db.feed.discoveryKey, { server: true, client: false });
+
+    // Make sure we have all the connections
+    await swarm.flush();
+  }
+
   // await db.put("/", Math.random().toString());
 
   return { db, metaDB, dataDB };

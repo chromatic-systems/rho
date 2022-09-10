@@ -13,19 +13,19 @@ let browserContext = null;
 const browserType = "chromium";
 const needs_update = [];
 
-async function startBrowser({ headless }) {
+async function startBrowser({ headless, slowMo=0 }) {
   let browser;
   // @ts-ignore
   if (browserType === "webkit") {
     browser = await webkit.launch({
-      headless: headless,
-      // slowMo: 200,
+      headless,
+      slowMo
       // devtools: true,
     });
   } else if (browserType === "chromium") {
     browser = await chromium.launch({
-      headless: headless,
-      // slowMo: 5,
+      headless,
+      slowMo
       // devtools: true,
     });
   }

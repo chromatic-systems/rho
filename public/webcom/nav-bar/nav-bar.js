@@ -54,7 +54,7 @@ function styles() {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
       font-size: 1.5em;
       display: flex;
@@ -68,8 +68,8 @@ function styles() {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
-      bottom: 20px;
-      right: 50px;
+      top: 60px;
+      right: 20px;
       font-size: 1.5em;
       display: flex;
       align-items: center;

@@ -21422,17 +21422,27 @@ var Editor = class extends HTMLElement {
     super();
     this.key = this.getAttribute("data-key");
     this.title = this.getAttribute("data-title");
-    const save = async () => {
-      const password = document.getElementById("password").value;
+    this.saveButtonId = this.getAttribute("data-save-button-id");
+    this.saveButton = document.getElementById(this.saveButtonId);
+
+
+    const save = async (event) => {
+      // const password = document.getElementById("password").value;
       await fetch(`/k/${this.key}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "text/html",
-          auth: password
+          auth: "password",
+          template: "article",
         },
         body: this.text
       });
     };
+
+    this.saveButton.addEventListener("click", async () => {
+      await save();
+    });
+
     const gotoKey = async () => {
       window.location.href = `/k/${this.key}`;
     };
@@ -21479,6 +21489,8 @@ var Editor = class extends HTMLElement {
     if (!match) {
       throw new Error(`mimetype:${mimetype} not supported`);
     }
+
+
     const doc2 = await response.text();
     this.editView = new EditorView({
       doc: doc2,
@@ -21491,12 +21503,14 @@ var Editor = class extends HTMLElement {
     });
     this.editView.focus();
   }
-  disconnectedCallback() {
-  }
+
   get text() {
     const iter = Array.from(this.editView.state.doc.iterLines());
     const t2 = iter.join("\n");
     return t2;
+  }
+
+  disconnectedCallback() {
   }
 };
 customElements.define("edit-code", Editor);

@@ -24,6 +24,7 @@ class Http {
     this.db = db;
     this.host = `http://localhost`;
     this.baseUrl = `${this.host}:${this.port}`;
+    
     // TODO: load these from a symbol, for now use a module
     this.renderTemplates = template;
 
@@ -57,11 +58,14 @@ class Http {
         return;
       }
 
-      this.clientHandles[data.key]?.forEach((c) => {
-        log(ll.info, "SSE:RELOAD", c.id);
+      if(!data.key) return
+      if(!this.clientHandles[data.key]) return
+      // log this.clientHandles
+      for ( const item in this.clientHandles[data.key]) {
+        log(ll.info, "SSE:RELOAD", item)
         const sseData = `data: reload\n\n`;
-        c.handle.write(sseData);
-      });
+        this.clientHandles[data.key][item].write(sseData)
+      }
     });
 
     return { server: this.server };
@@ -184,7 +188,7 @@ class Http {
       }
 
       if (matched && req.method === "GET") {
-        const result = await this.db.list();
+        const result = await this.db.list(10);
         res.writeHead(200, {
           "Content-Type": "application/json",
         });
@@ -267,18 +271,18 @@ class Http {
 
   addSSEClient(id, handle, key) {
     if (!this.clientHandles[key]) {
-      this.clientHandles[key] = [];
+      this.clientHandles[key] = {};
     }
-    this.clientHandles[key].push({ handle, id });
+    if(!this.clientHandles[key][id]) {
+      this.clientHandles[key][id] = handle;
+    }
   }
 
   removeSSEClient(id) {
     const keys = Object.keys(this.clientHandles);
     for (const key of keys) {
       // filter out the item with the id
-      this.clientHandles[key] = this.clientHandles[key].filter(
-        (client) => client.id !== id
-      );
+      delete this.clientHandles[key][id]
     }
   }
 
@@ -419,13 +423,13 @@ class Http {
   async handleEdit(req, res, groups) {
     const { key } = groups;
     const nodeAtKey = await this.db.get(key);
-    // if node at key is empty create the empty value for type ""
+
     if (nodeAtKey.meta.empty) {
       nodeAtKey.value = "";
     }
 
     const css = this.renderTemplates.baseCss();
-    const body = this.renderTemplates.editorBody(nodeAtKey);
+    const body = this.renderTemplates.editorBody2(nodeAtKey);
     const html = this.renderTemplates.baseHtml(nodeAtKey.key, body, [], css);
 
     res.writeHead(200, { "Content-Type": "text/html" });
@@ -459,9 +463,6 @@ class Http {
     // etag prep
     const etag = getSha1(cleanedValue);
 
-    // clear the render template cache
-    // delete this.renderTemplates[key];
-
     // put the key and redirect to the saved key
     await this.db.put(key, { ...meta, etag }, cleanedValue);
     const Location = `/${key}`;
@@ -476,6 +477,8 @@ class Http {
   async handleSymbolPut(req, res, groups) {
     const { key } = groups;
     const type = req.headers["content-type"];
+    let template = req.headers["template"];
+
     // load request body into a buffer
     let buffer;
     for await (const chunk of req) {
@@ -486,12 +489,24 @@ class Http {
       }
     }
 
+    if (type === "text/html") {
+      buffer = buffer
+        .toString("utf8")
+        .replace(/“/g, '"')
+        .replace(/”/g, '"');
+
+      if(!template) {
+        template = "html";
+      }
+    }
+
     // get sha1 hash of the buffer
     const hash = createHash("sha1");
     hash.update(buffer);
     const etag = hash.digest("hex");
-    // delete this.renderTemplates[key];
-    await this.db.put(key, { type, etag }, buffer);
+
+    const meta =  { type, etag, template }
+    await this.db.put(key, meta, buffer);
 
     const Location = `/k/${key}`;
     res.writeHead(200, {
@@ -510,15 +525,6 @@ class Http {
   getEtagHash(asset) {
     return this.etagCache[asset];
   }
-
-  // // Should be idempotent
-  // watchKey(key) {
-  //   console.log("watching key", key);
-  //   if (this.watchedKeys[key]) return;
-
-
-  //   this.watchedKeys[key] = cleanup;
-  // }
 
   async stop() {
     this.server.close();
@@ -544,7 +550,6 @@ function methodNotAllowed(req, res) {
 
 // HELPERS =====================================
 function urlMatch(request, pattern) {
-  // remove any ending "/" from the request url
   const url = request.url;
   const p = new URLPattern({ pathname: pattern });
   if (p.test({ pathname: url })) {
@@ -587,7 +592,6 @@ async function getSymbolFormData(req) {
       }
     });
     bb.on("close", async () => {
-      // const { keyPath } = await saveKey(key, type, data);
       const meta = { type, template };
       resolve({ key, meta, value });
     });
