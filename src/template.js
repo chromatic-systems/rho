@@ -3,16 +3,28 @@
 // ========================================================
 function article(symbol) {
   const css = baseCss();
-  const script = "";
+  const script = reloader()
   const mainElements = symbol.value.toString();
   const links = [`<a href="/">Home</a>`];
   const body = mainArticleFooter(mainElements, links);
   return baseHtml(symbol.key, body, script, css);
 }
 
+function reloader() {
+  return `
+  document.body.appendChild(document.createElement("p")).innerHTML = "RELOAD ON";
+  const evtSource = new EventSource("/sse");
+  evtSource.onmessage = function (event) {
+  console.log("RELOADING", event.data);
+  if (event.data === "reload") {
+    window.location.reload();
+  }
+  }`;
+}
+
 function _404(key) {
   const css = baseCss();
-  const script = "";
+  const script = reloader()
   const body = mainArticleFooter("404", [
     `<a href="/">Home</a>`,
     `<a href="/e/${key}">Edit</a>`,
@@ -36,10 +48,12 @@ function metaDataHtml(key, meta) {
   return html;
 }
 
-{/* <script type="module">
+{
+  /* <script type="module">
 import flamethrower from "/k/js/flame.js";
 flamethrower({ log: true, pageTransitions: true });
-</script>  */}
+</script>  */
+}
 function baseHtml(tile, body, script, style) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -47,6 +61,7 @@ function baseHtml(tile, body, script, style) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
+    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
     <title>${tile}</title>
 
     <style>
@@ -54,6 +69,7 @@ function baseHtml(tile, body, script, style) {
     </style>
   </head>
   <body>
+    <nav-bar data-key="chromascope"></nav-bar>
     ${body}
     <script>
     ${script}
@@ -146,7 +162,6 @@ function editorBody({ key, meta, value }) {
   </article>
   </form>`;
 }
-
 
 // ========================================================
 // SVG EXAMPLES
@@ -425,7 +440,17 @@ form {
 }
 
 export {
-  navBody, editorBody, listSymbolsBody, baseCss, 
-  baseHtml, metaDataHtml, mainArticleFooter, curves,
-  imageNode, randomHsl, article, circles, _404
-}
+  navBody,
+  editorBody,
+  listSymbolsBody,
+  baseCss,
+  baseHtml,
+  metaDataHtml,
+  mainArticleFooter,
+  curves,
+  imageNode,
+  randomHsl,
+  article,
+  circles,
+  _404,
+};

@@ -224,8 +224,6 @@ test("stop the server", async (t) => {
 // ========================================================
 // HELPERS
 // ========================================================
-
-
 async function fillInMessage(message) {
   await page.locator(`textarea[name='message']`).fill(message);
   // await page.type("textarea[name='message']", message);

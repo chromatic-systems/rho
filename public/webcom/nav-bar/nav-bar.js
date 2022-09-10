@@ -50,7 +50,7 @@ function styles() {
       background-color: var(--color-aware);
       color: var(--color-background);
     }
-    button {
+    #menu {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
@@ -64,6 +64,21 @@ function styles() {
       border-radius: 20px 20px;
       z-index: 2;
     }
+    #edit2 {
+      padding: 0 10px 5px 10px;
+      cursor: pointer;
+      position: fixed;
+      bottom: 20px;
+      right: 50px;
+      font-size: 1.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease-in-out;
+      border-radius: 20px 20px;
+      z-index: 2;
+    }
+
     button:hover {
       background-color: var(--color-aware);
       color: var(--color-background);
@@ -73,7 +88,7 @@ function styles() {
     `;
 }
 
-function template(symbol) {
+function template(symbol, editSymbol) {
   return `
   <nav>
       <a tabindex="1" href="/">Home</a>
@@ -87,7 +102,8 @@ function template(symbol) {
       <a tabindex="9" href="/apps/chess/">Chess</a>
       <a tabindex="10" href="/apps/dag/">Dag</a>
   </nav>
-  <button aria-label="menu">${symbol}</button>
+  <button id="menu" aria-label="menu">${symbol}</button>
+  <button id="edit2" aria-label="edit">${editSymbol}</button>
   `
 }
 
@@ -97,10 +113,12 @@ class Navigation extends HTMLElement {
     this.title = title
     this.attachShadow({ mode: "open" });
     const trigram = "☰";
-    this.shadowRoot.innerHTML = styles() + template(trigram)
+    const editSymbol = "✎";
+    this.shadowRoot.innerHTML = styles() + template(trigram, editSymbol);
     
     const linksElement = this.shadowRoot.querySelector("nav");
-    const titleElement = this.shadowRoot.querySelector("button");
+    const titleElement = this.shadowRoot.querySelector("#menu");
+    const editElement = this.shadowRoot.querySelector("#edit2");
     linksElement.style.display = "none";
 
     // anytime a link is clicked, hide the linksElement
@@ -118,10 +136,16 @@ class Navigation extends HTMLElement {
       }
       linksElement.style.display = "none";
     };
+
+    const activateEdit = () => {
+      // redirect the page to the edit page
+      window.location.href = "/e/" + this.key;
+    }
     // scroll page to 0,0
     //window.scrollTo({ top: 0, behavior: 'smooth' });
 
     titleElement.addEventListener("click", toggle);
+    editElement.addEventListener("click", activateEdit);
     // on meta-shift-L toggle
     document.addEventListener("keydown", (e) => {
       // console.log(e.key);

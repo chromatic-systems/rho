@@ -22,6 +22,7 @@ const __dirname = dirname(__filename);
 // STATE ========================================
 const publicPath = join(__dirname, "../public");
 const execP = promisify(exec);
+const screenshotSleepTime = 1;
 start();
 
 // TEST PLAN ====================================
@@ -38,9 +39,10 @@ async function start() {
   await test("get the index page", getIndexPage);
   await test("get a 404 for empty key", get404Page);
   await test("edit an empty symbol", editEmptySymbol);
+  await test("open the page editor", openTheEditor);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
-  await test("spawn the app", spawnApplication);
+  // await test("spawn the app", spawnApplication);
 }
 
 async function writeSymbolDB({ ctx, log, expect }) {
@@ -48,13 +50,13 @@ async function writeSymbolDB({ ctx, log, expect }) {
   const startResult = await writeDB.startDB();
   ctx.writeDB = writeDB;
 
-  const readDB = new SymbolDB({
-    mem: "ram",
-    mode: "read",
-    pubkey: startResult.pubkey,
-  });
-  await readDB.startDB();
-  ctx.readDB = readDB;
+  // const readDB = new SymbolDB({
+  //   mem: "ram",
+  //   mode: "read",
+  //   pubkey: startResult.pubkey,
+  // });
+  // await readDB.startDB();
+  // ctx.readDB = readDB;
 }
 
 // TESTS ========================================
@@ -63,9 +65,9 @@ async function startHTTP({ ctx, log, expect }) {
   await writeHttp.start();
   ctx.writeHttp = writeHttp;
 
-  const readHttp = new Http({ port: 8081, db: ctx.readDB });
-  await readHttp.start();
-  ctx.readHttp = readHttp;
+  // const readHttp = new Http({ port: 8081, db: ctx.readDB });
+  // await readHttp.start();
+  // ctx.readHttp = readHttp;
 }
 
 async function watchDir({ log, ctx, expect }) {
@@ -82,10 +84,8 @@ async function waitForKey({ log, ctx, expect }) {
   let result = { meta: { empty: true } };
   let key = ctx.uploadedKeys[0]
   while (result?.meta?.empty) {
-    log(ll.info, "wait", key);
     result = await ctx.writeDB.get(key);
-    // debugger
-    await sleep(1000);
+    await sleep(100);
   }
 }
 
@@ -123,9 +123,29 @@ async function get404Page({ ctx, log, expect }) {
 }
 
 async function editEmptySymbol({ log, ctx, expect }) {
+  const { page, context } = ctx;
+  const ssePage = await context.newPage();
+  const randomKey = randomUUID();
+  await ssePage.goto(`http://localhost:8080/${randomKey}`);
+
+  const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
+  expect(result.status(), 200, "status code is 200");
+  await fillInMessage(page, "<h2>hello world<h2>");
+  await clickSave(page);
+  const content = await page.content();
+  expect(content.includes("hello world"), true, "content includes hello world");
+  
+  // expect the reader page to be updated via sse
+  await ssePage.waitForSelector("h2");
+  await screenshot(ssePage, "test");
+}
+
+async function openTheEditor({ log, ctx, expect }) {
   const { page } = ctx;
   const randomKey = randomUUID();
-  const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
+  const result = await page.goto(`http://localhost:8080/${randomKey}`);
+  // clikc the button with id="edit2
+  await page.locator("#edit2").click();
   expect(result.status(), 200, "status code is 200");
 }
 
@@ -135,12 +155,54 @@ async function stopBrowser({ ctx, log, expect }) {
 
 async function stopHTTP({ ctx, log, expect }) {
   await ctx.writeHttp.stop();
-  await ctx.readHttp.stop();
+  // await ctx.readHttp.stop();
 }
 
+
 // ========================================================
-// REFERENCE
+// HELPERS
 // ========================================================
+async function screenshot(page, name, ms=screenshotSleepTime) {
+  const relativePath = `screenshots/${name}.png`;
+  const absolutePath = join(__dirname, relativePath);
+  await page.screenshot({ path: absolutePath });
+  await sleep(ms);
+}
+
+async function fillInMessage(page, message) {
+  await page.locator(`textarea[name='message']`).fill(message);
+  // await page.type("textarea[name='message']", message);
+}
+
+async function clickSave(page) {
+  await page.click("button[type='submit']");
+}
+
+async function clickMeta(page) {
+  // get the elemet that have text meta
+  await page.locator("text=meta").click();
+}
+
+async function clickNav(page) {
+  // get the elemet that have text meta
+  await page.locator("text=nav").click();
+}
+
+async function clickView(page) {
+  // get the elemet that have text meta
+  await page.locator("text=view").click();
+}
+
+async function tapSymbol(page, symbolKey) {
+  let href = `/${symbolKey}`;
+  if (symbolKey === "/") href = "/";
+  await page.click(`a[href='${href}']`);
+}
+
+async function tapLink(page, href) {
+  await page.click(`a[href='${href}']`);
+}
+
 async function spawnApplication({ log, ctx, is }) {
   const startPath = "./src/start.js";
   const childServer = spawn(`node`, [startPath, "8083", "ram", "write"]);
@@ -172,9 +234,9 @@ async function killServer(port) {
     const { stdout } = await execP(cmd);
     const pid = stdout.trim();
     await execP(`kill -9 ${pid}`);
-    log(ll.alert, "KILLED", pid);
+    log(ll.alert, "KILLED:", pid);
   } catch (error) {
-    log(ll.alert, "KILL", "PORT OPEN");
+    log(ll.info, "KILL:", "PORT OPEN");
   }
 }
 

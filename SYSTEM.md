@@ -59,3 +59,13 @@
 - `labels` {keys}
 - `icon` png | svg | jpg | 1-2[a-z0-9]
 
+# Cloudflare Tunnel
+```
+cloudflared tunnel list
+cloudflared tunnel --name dev --hostname dev.yourdomain.io --hello-world true
+cloudflared tunnel list
+cloudflared tunnel cleanup dev
+cloudflared tunnel delete dev
+cloudflared tunnel list
+```
+

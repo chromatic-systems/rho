@@ -1,5 +1,4 @@
 // INTERNAL LIBRARIES ===============================
-import * as sym from "./symbol.js";
 import * as template from "./template.js";
 import { log, logLevels as ll } from "./log.js";
 
@@ -18,6 +17,7 @@ class Http {
   baseUrl;
   renderTemplates;
   etagCache;
+  clientHandles;
 
   constructor({ port, db }) {
     this.port = port;
@@ -29,6 +29,8 @@ class Http {
 
     // TODO: hook up the etag UI configuation per symbol
     this.etagCache = {};
+    this.clientHandles = {};
+    this.watchedKeys = {};
   }
 
   async start() {
@@ -48,6 +50,20 @@ class Http {
     });
 
     await this.listen(this.port);
+
+    const cleanup = this.db.watch((err, data) => {
+      if (err) {
+        log(ll.alert, "WATCH ERROR", err);
+        return;
+      }
+
+      this.clientHandles[data.key]?.forEach((c) => {
+        log(ll.info, "SSE:RELOAD", c.id);
+        const sseData = `data: reload\n\n`;
+        c.handle.write(sseData);
+      });
+    });
+
     return { server: this.server };
   }
 
@@ -65,12 +81,12 @@ class Http {
   }
 
   async handleRequest(req, res) {
-
     if (!allowedMethods.includes(req.method)) {
       methodNotAllowed(req, res);
       return;
     }
 
+    // console.log("REQ", req.method, req.url);
     // if req.url ends with a /, replace it with /index.html
     if (req.url.endsWith("/")) {
       req.url = req.url + "index.html";
@@ -196,15 +212,15 @@ class Http {
       }
     }
 
-    let file = req.url;
-    // // INDEX
-    // if (file === "/") {
-    //   file = "index.html";
-    // }
-    // the key is the file
+    if (req.url === "/sse") {
+      this.handleSSE(req, res);
+      return;
+    }
+
+    let preKey = req.url;
     {
       // remove the leading / if it exists
-      const key = file.replace(/^\//, "");
+      const key = preKey.replace(/^\//, "");
       const result = await this.handleTemplateGet(req, res, { key });
       if (result) return;
 
@@ -219,6 +235,53 @@ class Http {
   }
 
   // HANDLERS =====================================
+  async handleSSE(req, res) {
+    // get the referer
+    const referer = req.headers.referer;
+    const myURL = new URL(referer);
+    let key = myURL.pathname;
+    // remove the leading / if it exists
+    key = key.replace(/^\//, "");
+    // remove k/ m/ n/ e/ if it exists
+    key = key.replace(/^(k|m|n|e)\//, "");
+    if (key === "") {
+      key = "index.html";
+    }
+
+    const headers = {
+      "Content-Type": "text/event-stream",
+      Connection: "keep-alive",
+      "Cache-Control": "no-cache",
+    };
+    res.writeHead(200, headers);
+
+    const id = randomUUID();
+    const c = this.addSSEClient(id, res, key);
+    // this.watchKey(key)
+
+    req.on("close", () => {
+      this.removeSSEClient(id);
+    });
+    return true
+  }
+
+  addSSEClient(id, handle, key) {
+    if (!this.clientHandles[key]) {
+      this.clientHandles[key] = [];
+    }
+    this.clientHandles[key].push({ handle, id });
+  }
+
+  removeSSEClient(id) {
+    const keys = Object.keys(this.clientHandles);
+    for (const key of keys) {
+      // filter out the item with the id
+      this.clientHandles[key] = this.clientHandles[key].filter(
+        (client) => client.id !== id
+      );
+    }
+  }
+
   async handleNav(req, res, navGroups) {
     const { key } = navGroups;
     const node = await this.db.get(key);
@@ -257,7 +320,6 @@ class Http {
     const symbol = await this.db.get(key);
     const { meta, value } = symbol;
 
-    // NOTHING HERE GO TO EDITOR
     if (meta.empty) {
       return false;
     }
@@ -302,8 +364,6 @@ class Http {
 
     // Get the template if it is not in the cache
     if (template == null) {
-      // TODO: load templates from symbol store
-      // template = await this.db.get(meta.template);
       res.writeHead(200, {
         "Content-Type": meta.type,
       });
@@ -343,11 +403,11 @@ class Http {
 
     if (meta.etag) {
       // TODO: research Cache-Control and ETag headers
-      res.setHeader(
-        "Cache-Control",
-        "max-age=10000, stale-while-revalidate=10000"
-      );
-      res.setHeader("ETag", meta.etag);
+      // res.setHeader(
+      //   "Cache-Control",
+      //   "max-age=10000, stale-while-revalidate=10000"
+      // );
+      // res.setHeader("ETag", meta.etag);
     }
     res.writeHead(200, {
       "Content-Type": meta.type,
@@ -386,7 +446,6 @@ class Http {
 
   async handleSymbolPost(req, res) {
     const { key, meta, value } = await getSymbolFormData(req);
-
     // webkit typed via playwright enters bad double quotes
     // so we replace them with standard double quotes
     let cleanedValue = value;
@@ -451,6 +510,15 @@ class Http {
   getEtagHash(asset) {
     return this.etagCache[asset];
   }
+
+  // // Should be idempotent
+  // watchKey(key) {
+  //   console.log("watching key", key);
+  //   if (this.watchedKeys[key]) return;
+
+
+  //   this.watchedKeys[key] = cleanup;
+  // }
 
   async stop() {
     this.server.close();

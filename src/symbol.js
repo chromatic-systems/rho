@@ -1,6 +1,8 @@
 // IMPORTS ================================================
 import * as writer from "./writer.js";
 import * as reader from "./reader.js";
+import { log, logLevels as ll } from "./log.js";
+
 // STATE ==================================================
 const READING = "read";
 const WRITING = "write";
@@ -59,7 +61,7 @@ class SymbolDB {
     return { seq:node.seq, key: symbolKey, meta: m, value: node.value };
   }
 
-  async  list(n) {
+  async list(n) {
     const keys = [];
     for await (const { key } of this.dataDB.createReadStream()) {
       keys.push(key);
@@ -68,10 +70,26 @@ class SymbolDB {
     return keys;
   }
   
-  async  del(key) {
+  async del(key) {
     const p1 = this.dataDB.del(key);
     const p2 = this.metaDB.del(key);
     return Promise.all([p1, p2]);
+  }
+
+  watch(cb) {
+    const rs = this.metaDB.createHistoryStream({ live: true })
+    rs.on("data", (data) => {
+      cb(null, data);
+    });
+    rs.on("error", (err) => {
+      log(ll.alert, "SYMBOLDB WATCH:", err);
+      cb(err, null);
+    });
+  
+    const cleanup = () => {
+      rs.destroy();
+    };
+    return cleanup
   }
   
   stream() {

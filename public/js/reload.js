@@ -8,4 +8,4 @@ evtSource.onmessage = function (event) {
   if (event.data === "reload") {
     window.location.reload();
   }
-};
+}

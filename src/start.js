@@ -29,7 +29,7 @@ if (PUBKEY) console.log(`PUBKEY: ${PUBKEY}`);
 // ========================================================
 const db = new SymbolDB({ mem: STORAGE_TYPE, mode: MODE, pubkey: PUBKEY})
 const {pubkey} = await db.startDB();
-log(ll.info, "START:", `pubkey: ${pubkey}`);
+log(ll.info, "START:", `PUBLIC KEY: ${pubkey}`);
 
 // ========================================================
 // START THE HTTP SERVER
