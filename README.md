@@ -87,7 +87,6 @@ npm start
 or
 node src/start.js port ram|disk write|read public-key
 ```
-```
 
 # Dev Tools
 Learn more about the dev tools and how to contribute to the project.
