@@ -38,7 +38,7 @@ async function start() {
   await test("start a browser", startBrowser);
   await test("get the index page", getIndexPage);
   await test("get a 404 for empty key", get404Page);
-  await test("edit an empty symbol and verify sse reload", editEmptySymbol);
+  await test("edit an empty symbol and verify sse reload", editEmptySymbolSSE);
   // await test("open the page editor", openTheEditor);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
@@ -121,7 +121,7 @@ async function get404Page({ ctx, log, expect }) {
   expect(result.status(), 404);
 }
 
-async function editEmptySymbol({ log, ctx, expect }) {
+async function editEmptySymbolSSE({ log, ctx, expect }) {
   const { page, context } = ctx;
   const ssePage = await context.newPage();
   const randomKey = randomUUID();

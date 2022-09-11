@@ -168,32 +168,28 @@ function editorBody2({ key, meta, value }) {
   return `
   <article>
   <div class="row">
+  <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
       <select tabindex="0" name="template">
       <option value="article">article</option>
       <option value="text/html">html</option>
       <option value="text/plain">text</option>
       <option value="text/javascript">javascript</option>
     </select>
-    <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
-  </div>
-  <main>
-  <edit-code
-  tabindex="1"
-  id="editor"
-  data-key="${key}"
-  data-title="${key}"
-  data-save-button-id="save"
-  ></edit-code>
-  </main>
+    </div>
+    <main>
+      <edit-code
+      tabindex="1"
+      id="editor"
+      data-key="${key}"
+      data-title="${key}"
+      data-save-button-id="save"
+      ></edit-code>
+    </main>
   </article>
   <article>
   <input tabindex="2" type="text" name="type" value="${meta.type}" />
-  <footer>
   <a href="/m/${key}">Meta</a>
   <a href="/${key}">View</a>
-  </footer>
-  </article>
-  <article>
   <input tabindex="4" type="hidden" name="key" value="${key}" />
   <a href="/n/${key}">Nav</a>
   </article>`;

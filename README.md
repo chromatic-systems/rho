@@ -1,6 +1,5 @@
 # Rho 
 ### Computational Media Mesh
-[overview](#overview) | [architecture](#architecture) | [roadmap](#roadmap) | [install](#install) | [test](#test) | [run](#run-the-server) | [open](#open-the-browser) | [dev](#dev-tools) | [dependencies](#dependencies)
 
 ![edit example](./public/images/globe-edit2.png)
 
@@ -8,11 +7,11 @@ Web Dev + P2P mesh
 1. Join the mesh with `npx chromatic-systems/rho <port> write | read <publick key>`
 1. moves the server from the cloud to the bookshelf
 1. Directed graph of components via `meta` keys
-1. Many examples with small code to learn from
-1. default UI is HTML ultra-light (hackable)
-1. Integrated UI live browser Testing
-1. CSS from scratch + reset
+1. Many examples with code to learn from
+1. Integrated browser Testing
 1. Integrated code assistant
+1. Integrated Web Crawler
+1. hackable default UI
 1. Core `node:http`
 1. no trackers
 1. no PII
@@ -88,35 +87,51 @@ or
 node src/start.js port ram|disk write|read public-key
 ```
 
-# Dev Tools
-Learn more about the dev tools and how to contribute to the project.
-1. [SYSTEM](SYSTEM.md)
-
 # Optional Dependencies
 1. OpenAi Codex API key https://beta.openai.com/docs/guides/code
 
-## Templates
+# Priorites
+1. Tests run first
+1. Dont break the build
+1. Test the live system
+1. Clean up as you go
+1. Getting started over perfecting the system
+
+# Cloudflare Tunnel Getting Started
+```
+cloudflared tunnel list
+cloudflared tunnel --name dev --hostname dev.yourdomain.io --hello-world true
+cloudflared tunnel list
+cloudflared tunnel cleanup dev
+cloudflared tunnel delete dev
+cloudflared tunnel list
+```
+
+# Symbol Templates
+1. Article: 
+1. Text:
+1. HTML:
+1. Markdown: https://github.com/showdownjs/showdown
+1. Canvas: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
 1. Globe: https://chromatic.systems/h3
-1. Canvas: javascript
 1. Tree: https://chromatic.systems/dag
 1. Graph: https://chromatic.systems/dag
 1. Timeline:
-1. Table: Web HTML
+1. Table:
 1. cryptography: 
 1. Map: https://deck.gl/
-1. Image: Web HTML
-1. Video: Web HTML
-1. Audio: Web HTML
-1. Text: Web HTML
+1. Image:
+1. Video:
+1. Audio: https://github.com/chaosprint/glicol
 1. Code: https://chromatic.systems/e/1
-1. Form: Web HTML
-1. List: Web HTML
+1. Form:
+1. List:
 1. Grid:
 1. Body Track: https://www.tensorflow.org/lite/examples/pose_estimation/overview
 1. Paint: https://github.com/CompVis/stable-diffusion
 1. Payments: https://github.com/holepunchto/invoices
-1. Calendar Custom html only
-1. Chat Custom 
+1. Calendar: 
+1. Chat:  
 1. Email https://www.mailgun.com/
 1. Phone https://www.twilio.com/
 1. OCR https://github.com/naptha/tesseract.js
