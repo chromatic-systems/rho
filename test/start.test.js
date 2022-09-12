@@ -127,12 +127,13 @@ async function get404Page({ ctx, log, expect }) {
     return
   }
 
-  let result;
+  let _404failed = false;
   try {
-    result = await page.goto(`http://localhost:8080/k/${randomKey}`);
+    await page.goto(`http://localhost:8080/k/${randomKey}`);
   } catch (error) {
-    expect(result.status(), 404);
+    _404failed = true;
   }
+  expect(_404failed, true);
 }
 
 async function editEmptySymbolSSE({ log, ctx, expect }) {
