@@ -2,7 +2,7 @@
 // WHOLE PAGE EXAMPLES
 // ========================================================
 function article(symbol) {
-  const css = baseCss();
+  const css = "";
   const script = reloader()
   const mainElements = symbol.value.toString();
   // const links = [`<a href="/">Home</a>`];
@@ -24,24 +24,18 @@ function reloader() {
 }
 
 function _404(key) {
-  const css = baseCss();
+  const css = "";
   const script = reloader()
   const body = mainArticleFooter("404", [
-    // `<a href="/">Home</a>`,
-    // `<a href="/e/${key}">Edit</a>`,
   ]);
   return baseHtml("404", body, script, css);
 }
 
 function metaDataHtml(key, meta) {
   const preCode = `<pre>${JSON.stringify(meta, null, 2)}</pre>`;
-  // link back to edit page
   const editLink = `<a href="/e/${key}">edit</a>`;
-  // link to key page
   const keyLink = `<a href="/${key}">view</a>`;
   const navLink = `<a href="/n/${key}">nav</a>`;
-  // link back to index page
-  // const indexLink = `<a href="/">index</a>`;
   const body = mainArticleFooter(preCode, [editLink, keyLink, navLink]);
   const css = baseCss();
   const script = "";
@@ -62,7 +56,7 @@ function baseHtml(title, body, script, style) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
-
+    <link rel="stylesheet" href="/base.css" />
     <title>${title}</title>
     <style>
       ${style}
@@ -137,7 +131,7 @@ function navBody({ key, meta }) {
 
 function editorBody({ key, meta, value }) {
   // button should flex grow
-  const buttonStyle = `style="flex-grow: 1;"`;
+  const buttonStyle = `max-width: 200px; width: 200px;`;
   return `
   <form action="/k" method="post">
   <article>
@@ -164,18 +158,19 @@ function editorBody({ key, meta, value }) {
 
 function editorBody2({ key, meta, value }) {
   // button should flex grow
-  const buttonStyle = `style="flex-grow: 1;"`;
+  const buttonStyle = `width: 300px;`;
   return `
   <article>
-  <div class="row">
   <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
-      <select tabindex="0" name="template">
-      <option value="article">article</option>
-      <option value="text/html">html</option>
-      <option value="text/plain">text</option>
-      <option value="text/javascript">javascript</option>
-    </select>
-    </div>
+  <div class="row">
+  <p>Template:</p>
+  <select tabindex="0" name="template">
+  <option value="article">article</option>
+  <option value="text/html">html</option>
+  <option value="text/plain">text</option>
+  <option value="text/javascript">javascript</option>
+  </select>
+  </div>
     <main>
       <edit-code
       tabindex="1"
@@ -272,6 +267,29 @@ textarea {
 }
 :where([draggable="true"]) {
   -webkit-user-drag: element;
+}
+select {
+  // styles reset, including removing the default dropdown arrow
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  padding-top: 1px;
+  margin: 0;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+
+  // Stack above custom arrow
+  z-index: 1;
+
+  // Remove focus outline, will add on alternate element
+  outline: none;
 }
 
 /* color vars */
@@ -399,7 +417,7 @@ button {
   cursor: pointer;
   padding: 20px;
   background-color: var(--color-alert);
-  border-radius: 15px;
+  border-radius: 30px;
   text-align: center;
   font-size: 1.3em;
   /* transition 1 sec */
@@ -414,7 +432,7 @@ button:hover {
 button:focus {
   background-color: var(--color-focus);
   color: var(--color-background);
-  outline: 2px solid white;
+  outline: 3px solid var(--color-border);
 }
 
 textarea {

@@ -20,6 +20,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // STATE ========================================
+const HEADLESS = false;
+const SLOWMO = 0;
 const publicPath = join(__dirname, "../public");
 const execP = promisify(exec);
 const screenshotSleepTime = 1;
@@ -95,8 +97,8 @@ async function waitForKey({ log, ctx, expect }) {
 
 async function startBrowser({ ctx, log, expect }) {
   const { page, context, browser } = await watchBrowser.startBrowser({
-    headless: true,
-    slowMo: 0
+    headless: HEADLESS,
+    slowMo: SLOWMO
   });
   await page.evaluate(() => {
     console.info("browser logging attached");
@@ -117,8 +119,20 @@ async function getIndexPage({ ctx, log, expect }) {
 async function get404Page({ ctx, log, expect }) {
   const { page } = ctx;
   const randomKey = randomUUID();
-  const result = await page.goto(`http://localhost:8080/k/${randomKey}`);
-  expect(result.status(), 404);
+
+  // playwright crashes if HEADLESS is false and it gets an empty 404
+  if(HEADLESS) {
+    const result = await page.goto(`http://localhost:8080/k/${randomKey}`);
+    expect(result.status(), 404);
+    return
+  }
+
+  let result;
+  try {
+    result = await page.goto(`http://localhost:8080/k/${randomKey}`);
+  } catch (error) {
+    expect(result.status(), 404);
+  }
 }
 
 async function editEmptySymbolSSE({ log, ctx, expect }) {
@@ -130,23 +144,17 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
   expect(result.status(), 200, "status code is 200");
 
+  // focus on the editor
   const editor = await page.locator("#editor")
   await editor.focus();
   await editor.click();
-  // press command + a
-  await page.keyboard.down("Meta");
-  await page.keyboard.press("KeyA");
-  await page.keyboard.up("Meta");
-  // delete
-  await page.keyboard.press("Delete");
+
+  // type in the editor box
   await page.keyboard.type("<h2>hello world");
   await page.keyboard.down("Meta");
-
   await page.keyboard.press("Enter");
   await page.keyboard.up("Meta");
-
   await page.keyboard.type(`<p>${randomKey}`);
-  // await fillInMessage(page, "<h2>hello world<h2>");
   await clickSave(page);
   await screenshot(page, "test2");
   

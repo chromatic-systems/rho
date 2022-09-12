@@ -90,27 +90,35 @@ class Http {
       return;
     }
 
+    
     // console.log("REQ", req.method, req.url);
     // if req.url ends with a /, replace it with /index.html
     if (req.url.endsWith("/")) {
       req.url = req.url + "index.html";
     }
-
+    
     // TODO: more robust routing, preferably strict
     // res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
     // res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-
+    
     const cookies = req.headers.cookie;
     if (cookies) {
       // no need to set
     }
-
+    
     // This is the simplest cookie, a uudid set to HTTPOnly
     // theoretically this hides the value, need more understanding
     if (!cookies) {
       const id = randomUUID();
       const secure_cookie = makeCookie(id);
       res.setHeader("Set-Cookie", secure_cookie);
+    }
+
+    // if req is for base.css return the template
+    if (req.url === "/base.css") {
+      res.setHeader("Content-Type", "text/css");
+      res.end(this.renderTemplates.baseCss());
+      return;
     }
 
     // not used other than a test, pages could listen via
@@ -391,14 +399,15 @@ class Http {
 
   async handleSymbolGet(req, res, groups) {
     const { key } = groups;
-    const { meta, value } = await this.db.get(key);
+    let { meta, value } = await this.db.get(key);
 
     if (meta.empty) {
-      this._404(req, res, key);
-      return true;
+      // this._404(req, res, key);
+      // return true;
+      value = "";
     }
 
-    if (
+    else if (
       meta.type === "text/html" &&
       meta.etag !== getSha1(value.toString("utf8"))
     ) {
@@ -413,7 +422,15 @@ class Http {
       // );
       // res.setHeader("ETag", meta.etag);
     }
-    res.writeHead(200, {
+
+    let status = 200;
+    if(meta.empty) {
+      status = 404;
+      value = "";
+      meta.type = "text/plain";
+    }
+
+    res.writeHead(status, {
       "Content-Type": meta.type,
     });
     res.end(value);
@@ -428,7 +445,7 @@ class Http {
       nodeAtKey.value = "";
     }
 
-    const css = this.renderTemplates.baseCss();
+    const css = ""
     const body = this.renderTemplates.editorBody2(nodeAtKey);
     const html = this.renderTemplates.baseHtml(nodeAtKey.key, body, [], css);
 

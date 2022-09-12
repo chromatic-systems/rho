@@ -54,7 +54,7 @@ function styles() {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
-      top: 20px;
+      bottom: 20px;
       right: 20px;
       font-size: 1.5em;
       display: flex;
@@ -68,7 +68,7 @@ function styles() {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
-      top: 60px;
+      bottom: 60px;
       right: 20px;
       font-size: 1.5em;
       display: flex;
