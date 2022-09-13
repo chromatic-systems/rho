@@ -3,12 +3,78 @@
 // ========================================================
 function article(symbol) {
   const css = "";
-  const script = reloader()
+  const script = reloader();
   const mainElements = symbol.value.toString();
   // const links = [`<a href="/">Home</a>`];
   const links = [];
   const body = mainArticleFooter(mainElements, links);
   return baseHtml(symbol.key, body, script, css);
+}
+
+function globe(symbol) {
+  const css = "";
+  const script = globeScript(symbol.value.toString());
+  const mainElements = globeMain();
+  const headers = globeHeader();
+  // const links = [`<a href="/">Home</a>`];
+  const links = [];
+  const body = mainArticleFooter(mainElements, links);
+  return baseHtml(symbol.key, body, script, css, headers);
+}
+
+function globeMain() {
+  return `
+  <div id="globeViz"></div>
+  `;
+}
+
+function globeHeader() {
+  return `
+  <script src="//unpkg.com/three"></script>
+  <script src="//unpkg.com/globe.gl"></script>
+  `;
+}
+
+function globeScript(code) {
+  return `const world = Globe({ animateIn: false })(
+    document.getElementById("globeViz")
+  )
+    .globeImageUrl("/apps/globe3/blue-marble.jpg")
+    .bumpImageUrl("/apps/globe3/topo.png");
+
+  // Auto-rotate
+  world.controls().autoRotate = true;
+  world.controls().autoRotateSpeed = 0.35;
+
+  // Add clouds sphere
+  const CLOUDS_ALT = 0.02;
+  const CLOUDS_ROTATION_SPEED = -0.01; // deg/frame
+
+  new THREE.TextureLoader().load(
+    "/k/images/clouds.png",
+    (cloudsTexture) => {
+      const clouds = new THREE.Mesh(
+        new THREE.SphereBufferGeometry(
+          world.getGlobeRadius() * (1 + CLOUDS_ALT),
+          75,
+          75
+        ),
+        new THREE.MeshPhongMaterial({
+          map: cloudsTexture,
+          transparent: true,
+        })
+      );
+      world.scene().add(clouds);
+
+      (function rotateClouds() {
+        clouds.rotation.y += (CLOUDS_ROTATION_SPEED * Math.PI) / 180;
+        requestAnimationFrame(rotateClouds);
+      })();
+    }
+  );
+
+  ${code}
+  `;
 }
 
 function reloader() {
@@ -25,10 +91,9 @@ function reloader() {
 
 function _404(key) {
   const css = "";
-  const script = reloader()
-  const body = mainArticleFooter("404", [
-  ]);
-  return baseHtml("404", body, script, css);
+  const script = reloader();
+  const body = mainArticleFooter("404", []);
+  return baseHtml(key, body, script, css);
 }
 
 function metaDataHtml(key, meta) {
@@ -49,21 +114,35 @@ import flamethrower from "/k/js/flame.js";
 flamethrower({ log: true, pageTransitions: true });
 </script>  */
 }
-function baseHtml(title, body, script, style) {
-  return `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
+function baseHtml(title, body, script, style, headers) {
+  let head = `<meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
+  <link rel="stylesheet" href="/base.css" />
+  ${headers}
+  <title>${title}</title>
+  <style>
+    ${style}
+  </style>`;
+
+  if (!headers) {
+    head = `<meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="/k/favicon.ico" />
     <link rel="stylesheet" href="/base.css" />
     <title>${title}</title>
     <style>
       ${style}
-    </style>
-  </head>
+    </style>`;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+${head}
+</head>
   <body>
-    <nav-bar data-key="chromascope"></nav-bar>
+    <nav-bar data-key="${title}"></nav-bar>
     ${body}
     <script>
     ${script}
@@ -131,44 +210,18 @@ function navBody({ key, meta }) {
 
 function editorBody({ key, meta, value }) {
   // button should flex grow
-  const buttonStyle = `max-width: 200px; width: 200px;`;
-  return `
-  <form action="/k" method="post">
-  <article>
-  <select tabindex="0" name="template">
-  <option value="article">article</option>
-  <option value="text/html">html</option>
-  <option value="text/plain">text</option>
-  <option value="text/javascript">javascript</option>
-  </select>
-  <textarea id="message" tabindex="1" name="message" placeholder="message">${value}</textarea>
-  <input tabindex="2" type="text" name="type" value="${meta.type}" />
-  <footer>
-  <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
-  <a href="/m/${key}">Meta</a>
-  <a href="/${key}">View</a>
-  </footer>
-  </article>
-  <article>
-  <input tabindex="4" type="hidden" name="key" value="${key}" />
-  <a href="/n/${key}">Nav</a>
-  </article>
-  </form>`;
-}
-
-function editorBody2({ key, meta, value }) {
-  // button should flex grow
   const buttonStyle = `width: 300px;`;
   return `
   <article>
   <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
   <div class="row">
   <p>Template:</p>
-  <select tabindex="0" name="template">
+  <select id="template-selector" tabindex="0" name="template">
   <option value="article">article</option>
-  <option value="text/html">html</option>
-  <option value="text/plain">text</option>
-  <option value="text/javascript">javascript</option>
+  <option id="globe-option" value="globe">globe</option>
+  <option value="html">html</option>
+  <option value="text">text</option>
+  <option value="javascript">javascript</option>
   </select>
   </div>
     <main>
@@ -178,6 +231,7 @@ function editorBody2({ key, meta, value }) {
       data-key="${key}"
       data-title="${key}"
       data-save-button-id="save"
+      data-template-selector-id="template-selector"
       ></edit-code>
     </main>
   </article>
@@ -189,9 +243,6 @@ function editorBody2({ key, meta, value }) {
   <a href="/n/${key}">Nav</a>
   </article>`;
 }
-
-
-
 
 // ========================================================
 // SVG EXAMPLES
@@ -421,7 +472,6 @@ button {
   text-align: center;
   font-size: 1.3em;
   /* transition 1 sec */
-  transition: all 1s;
 }
 
 button:hover {
@@ -511,5 +561,32 @@ export {
   article,
   circles,
   _404,
-  editorBody2
+  globe,
 };
+
+function editorBodyOld({ key, meta, value }) {
+  // button should flex grow
+  const buttonStyle = `max-width: 200px; width: 200px;`;
+  return `
+  <form action="/k" method="post">
+  <article>
+  <select id="template-selector" tabindex="0" name="template">
+  <option value="article">article</option>
+  <option value="text/html">html</option>
+  <option value="text/plain">text</option>
+  <option value="text/javascript">javascript</option>
+  </select>
+  <textarea id="message" tabindex="1" name="message" placeholder="message">${value}</textarea>
+  <input tabindex="2" type="text" name="type" value="${meta.type}" />
+  <footer>
+  <button ${buttonStyle} id="save" tabindex="3" type="submit">Save</button>
+  <a href="/m/${key}">Meta</a>
+  <a href="/${key}">View</a>
+  </footer>
+  </article>
+  <article>
+  <input tabindex="4" type="hidden" name="key" value="${key}" />
+  <a href="/n/${key}">Nav</a>
+  </article>
+  </form>`;
+}

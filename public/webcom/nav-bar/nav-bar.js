@@ -64,7 +64,7 @@ function styles() {
       border-radius: 20px 20px;
       z-index: 2;
     }
-    #edit2 {
+    #edit {
       padding: 0 10px 5px 10px;
       cursor: pointer;
       position: fixed;
@@ -92,7 +92,6 @@ function template(symbol, editSymbol) {
   return `
   <nav>
       <a tabindex="1" href="/">Home</a>
-      <a tabindex="2" href="/apps/editor/">Edit</a>
       <a tabindex="3" href="/apps/globe3/">Globe</a>
       <a tabindex="4" href="/apps/upload/">Upload</a>
       <a tabindex="5" href="/apps/record/">Record</a>
@@ -103,13 +102,13 @@ function template(symbol, editSymbol) {
       <a tabindex="10" href="/apps/dag/">Dag</a>
   </nav>
   <button id="menu" aria-label="menu">${symbol}</button>
-  <button id="edit2" aria-label="edit">${editSymbol}</button>
+  <button id="edit" aria-label="edit">${editSymbol}</button>
   `
 }
 
 class Navigation extends HTMLElement {
   connectedCallback(key, title) {
-    this.key = key
+  this.key = this.getAttribute("data-key");
     this.title = title
     this.attachShadow({ mode: "open" });
     const trigram = "☰";
@@ -118,7 +117,7 @@ class Navigation extends HTMLElement {
     
     const linksElement = this.shadowRoot.querySelector("nav");
     const titleElement = this.shadowRoot.querySelector("#menu");
-    const editElement = this.shadowRoot.querySelector("#edit2");
+    const editElement = this.shadowRoot.querySelector("#edit");
     linksElement.style.display = "none";
 
     // anytime a link is clicked, hide the linksElement

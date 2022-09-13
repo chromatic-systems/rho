@@ -364,6 +364,7 @@ class Http {
       return true;
     }
 
+    console.log("rendering template", key, meta.template);
     if (meta.template == null) {
       res.writeHead(200, {
         "Content-Type": meta.type,
@@ -446,7 +447,7 @@ class Http {
     }
 
     const css = ""
-    const body = this.renderTemplates.editorBody2(nodeAtKey);
+    const body = this.renderTemplates.editorBody(nodeAtKey);
     const html = this.renderTemplates.baseHtml(nodeAtKey.key, body, [], css);
 
     res.writeHead(200, { "Content-Type": "text/html" });

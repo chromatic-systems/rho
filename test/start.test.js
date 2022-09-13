@@ -15,12 +15,13 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { request } from "undici";
+import { debug } from "node:console";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // STATE ========================================
-const HEADLESS = false;
+const HEADLESS = true;
 const SLOWMO = 0;
 const publicPath = join(__dirname, "../public");
 const execP = promisify(exec);
@@ -36,15 +37,34 @@ async function start() {
   await test("start the read and write http server", startHTTP);
   await test("directory load via http put", putDir);
   await test("wait for key to be in the readDB", waitForKey);
-  await test("watch directory and load on add or change", watchDir);
+  // await test("watch directory and load on add or change", watchDir);
   await test("start a browser", startBrowser);
-  await test("get the index page", getIndexPage);
-  await test("get a 404 for empty key", get404Page);
-  await test("edit an empty symbol and verify sse reload", editEmptySymbolSSE);
+  // await test("get the index page", getIndexPage);
+  // await test("get a 404 for empty key", get404Page);
+  // await test("edit an empty symbol and verify sse reload", editEmptySymbolSSE);
+  await test("edit the globe template", editGlobe);
   // await test("open the page editor", openTheEditor);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
   // await test("spawn the app", spawnApplication);
+}
+
+async function editGlobe({ ctx, log, expect }) {
+  const page = await ctx.page;
+  // create a uuid
+  const uuid = randomUUID();
+  // goto the page
+  await page.goto(`http://localhost:8080/${uuid}`);
+  // click the edit button
+  await page.locator('#edit').click();
+  await page.locator('select[name="template"]').selectOption('globe');
+  await page.keyboard.type("zoomTo(0,0)");
+  // click the save button
+  console.log("clicking save");
+  await page.locator('#save').click();
+  await screenshot(page, "test", 1000);
+  await page.goto(`http://localhost:8080/${uuid}`);
+  await screenshot(page, "test");
 }
 
 async function writeSymbolDB({ ctx, log, expect }) {
@@ -142,6 +162,8 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   const randomKey = randomUUID();
   await ssePage.goto(`http://localhost:8080/${randomKey}`);
 
+  // 
+
   const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
   expect(result.status(), 200, "status code is 200");
 
@@ -162,6 +184,8 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   // expect the reader page to be updated via sse
   await ssePage.waitForSelector("h2");
   await screenshot(ssePage, "test");
+  // close the sse page
+  await ssePage.close();
 }
 
 async function openTheEditor({ log, ctx, expect }) {
@@ -169,7 +193,7 @@ async function openTheEditor({ log, ctx, expect }) {
   const randomKey = randomUUID();
   const result = await page.goto(`http://localhost:8080/${randomKey}`);
 
-  await page.locator("#edit2").click();
+  await page.locator("#edit").click();
   expect(result.status(), 200, "status code is 200");
 }
 

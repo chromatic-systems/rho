@@ -21424,16 +21424,18 @@ var Editor = class extends HTMLElement {
     this.title = this.getAttribute("data-title");
     this.saveButtonId = this.getAttribute("data-save-button-id");
     this.saveButton = document.getElementById(this.saveButtonId);
-
+    this.templateSelectorId = this.getAttribute("data-template-selector-id");
 
     const save = async (event) => {
       // const password = document.getElementById("password").value;
+      const template = document.getElementById(this.templateSelectorId).value;
+      console.log("saving", this.key);
       await fetch(`/k/${this.key}`, {
         method: "PUT",
         headers: {
           "Content-Type": "text/html",
           auth: "password",
-          template: "article",
+          template
         },
         body: this.text
       });
