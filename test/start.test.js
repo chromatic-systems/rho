@@ -9,13 +9,12 @@ import Http from "../src/http.js";
 import SymbolDB from "../src/symbol.js";
 
 // EXTERNAL LIBRARIES ===========================
+// @ts-ignore
 import { exec, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { request } from "undici";
-import { debug } from "node:console";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -30,39 +29,46 @@ start();
 
 // TEST PLAN ====================================
 async function start() {
-  await killServer(8080)
+  await killServer(8080);
+
+  // TODO: Something in the symbolTest is conflicting with database startup
+  // strange because we are using ram and stopping the previous test
+  // for now we test independently
   // await symbolTest.start();
   // await httpTest.start();
+
   await test("create a read and write SymbolDB", writeSymbolDB);
   await test("start the read and write http server", startHTTP);
   await test("directory load via http put", putDir);
-  await test("wait for key to be in the readDB", waitForKey);
-  // await test("watch directory and load on add or change", watchDir);
+  await test("wait for key to be in the context DB", waitForKey);
+  await test("watch directory and load on add or change", watchDir);
   await test("start a browser", startBrowser);
-  // await test("get the index page", getIndexPage);
-  // await test("get a 404 for empty key", get404Page);
-  // await test("edit an empty symbol and verify sse reload", editEmptySymbolSSE);
+  await test("get the index page", getIndexPage);
+  await test("get a 404 for empty key", get404Page);
+  await test("edit an empty symbol and verify sse reload", editEmptySymbolSSE);
   await test("edit the globe template", editGlobe);
-  // await test("open the page editor", openTheEditor);
+  // await test("edit a gemotric algebra symbol", editGeometricAlgebra);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
   // await test("spawn the app", spawnApplication);
 }
 
+async function editGeometricAlgebra({ ctx, log, expect }) {
+  const page = await ctx.page;
+  const uuid = randomUUID();
+
+  await screenshot(page, "test");
+}
+
 async function editGlobe({ ctx, log, expect }) {
   const page = await ctx.page;
-  // create a uuid
   const uuid = randomUUID();
-  // goto the page
   await page.goto(`http://localhost:8080/${uuid}`);
-  // click the edit button
-  await page.locator('#edit').click();
-  await page.locator('select[name="template"]').selectOption('globe');
-  await page.keyboard.type("zoomTo(0,0)");
-  // click the save button
-  console.log("clicking save");
-  await page.locator('#save').click();
-  await screenshot(page, "test", 1000);
+  await page.locator("#edit").click();
+  await sleep(100);
+  await page.keyboard.type("console.log('hello world')");
+  await page.locator('select[name="template"]').selectOption("globe");
+  await page.locator("#save").click();
   await page.goto(`http://localhost:8080/${uuid}`);
   await screenshot(page, "test");
 }
@@ -98,13 +104,17 @@ async function watchDir({ log, ctx, expect }) {
 }
 
 async function putDir({ log, ctx, expect }) {
-  const uploadedKeys = await file.putDir(publicPath, "public", ctx.writeHttp.baseUrl);
+  const uploadedKeys = await file.putDir(
+    publicPath,
+    "public",
+    ctx.writeHttp.baseUrl
+  );
   ctx.uploadedKeys = uploadedKeys;
 }
 
 async function waitForKey({ log, ctx, expect }) {
   let result = { meta: { empty: true } };
-  let key = ctx.uploadedKeys[0]
+  let key = ctx.uploadedKeys[0];
   while (result?.meta?.empty) {
     result = await ctx.writeDB.get(key);
     await sleep(100);
@@ -118,10 +128,10 @@ async function waitForKey({ log, ctx, expect }) {
 async function startBrowser({ ctx, log, expect }) {
   const { page, context, browser } = await watchBrowser.startBrowser({
     headless: HEADLESS,
-    slowMo: SLOWMO
+    slowMo: SLOWMO,
   });
   await page.evaluate(() => {
-    console.info("browser logging attached");
+    console.error("browser logging attached");
   });
   ctx.page = page;
   ctx.context = context;
@@ -141,19 +151,8 @@ async function get404Page({ ctx, log, expect }) {
   const randomKey = randomUUID();
 
   // playwright crashes if HEADLESS is false and it gets an empty 404
-  if(HEADLESS) {
-    const result = await page.goto(`http://localhost:8080/k/${randomKey}`);
-    expect(result.status(), 404);
-    return
-  }
-
-  let _404failed = false;
-  try {
-    await page.goto(`http://localhost:8080/k/${randomKey}`);
-  } catch (error) {
-    _404failed = true;
-  }
-  expect(_404failed, true);
+  const result = await page.goto(`http://localhost:8080/${randomKey}`);
+  expect(result.status(), 404);
 }
 
 async function editEmptySymbolSSE({ log, ctx, expect }) {
@@ -162,13 +161,11 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   const randomKey = randomUUID();
   await ssePage.goto(`http://localhost:8080/${randomKey}`);
 
-  // 
-
   const result = await page.goto(`http://localhost:8080/e/${randomKey}`);
   expect(result.status(), 200, "status code is 200");
 
   // focus on the editor
-  const editor = await page.locator("#editor")
+  const editor = await page.locator("#editor");
   await editor.focus();
   await editor.click();
 
@@ -180,21 +177,11 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   await page.keyboard.type(`<p>${randomKey}`);
   await clickSave(page);
   await screenshot(page, "test2");
-  
+
   // expect the reader page to be updated via sse
-  await ssePage.waitForSelector("h2");
   await screenshot(ssePage, "test");
-  // close the sse page
+  await ssePage.waitForSelector("h2");
   await ssePage.close();
-}
-
-async function openTheEditor({ log, ctx, expect }) {
-  const { page } = ctx;
-  const randomKey = randomUUID();
-  const result = await page.goto(`http://localhost:8080/${randomKey}`);
-
-  await page.locator("#edit").click();
-  expect(result.status(), 200, "status code is 200");
 }
 
 async function stopBrowser({ ctx, log, expect }) {
@@ -206,11 +193,29 @@ async function stopHTTP({ ctx, log, expect }) {
   // await ctx.readHttp.stop();
 }
 
-
 // ========================================================
 // HELPERS
 // ========================================================
-async function screenshot(page, name, ms=screenshotSleepTime) {
+async function geometricAlgebra() {
+  const script = `// Create a complex Algebra.
+  Algebra(0,1,()=>{
+  
+  // Graph a two dimensional function to a canvas.
+  // In this case we output the iterations it takes for z*z+c to converge to
+  // infinity. (well, more than 2). 
+    var canvas = this.graph((x,y)=>{
+      var n=35, z=0e1, c=x*1.75-1+y*1e1;
+      while (z < 2 && n--) z=z**2+c;
+      return (n/30);
+    });
+  
+  // Show the result
+    document.getElementById("stage1").appendChild(canvas);
+    
+  });`;
+  return script;
+}
+async function screenshot(page, name, ms = screenshotSleepTime) {
   const relativePath = `screenshots/${name}.png`;
   const absolutePath = join(__dirname, relativePath);
   await page.screenshot({ path: absolutePath });
@@ -253,7 +258,13 @@ async function tapLink(page, href) {
 
 async function spawnApplication({ log, ctx, is }) {
   const startPath = "./src/start.js";
-  const childServer = spawn(`node`, [startPath, "8083", "ram", "write"]);
+  const childServer = spawn(`node`, [
+    startPath,
+    "8083",
+    "ram",
+    "write",
+    "false",
+  ]);
   childServer.stdout.on("data", (data) => {
     const str = data.toString().trim();
     log(ll.info, "SPAWN:", str);

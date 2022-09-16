@@ -25,8 +25,8 @@ async function startBrowser({ headless, slowMo=0 }) {
   } else if (browserType === "chromium") {
     browser = await chromium.launch({
       headless,
-      slowMo
-      // devtools: true,
+      slowMo,
+      devtools: true,
     });
   }
 

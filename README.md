@@ -2,9 +2,54 @@
 ### Computational Media Mesh
 
 ![edit example](./public/images/globe-edit2.png)
+> Live in browser edit example
+
+![dev log update](./public/images/devlog.png)
+> Dev log update
+
+# Milestone 1: Peer-to-peer mesh
+- npx to p2p mesh `working!`
+- web editor `working!`
+- p2p keystore `working!`
+
+# Milestone 2: Codex integration
+- codex `basic library working, need integration`
+- navigation `basic page enabled, need user interface`
+
+# Milestone 3: Full Text Search
+- full text search 
+see https://github.com/nextapps-de/flexsearch
+
+# Start
+To install the program
+```sh
+npx chromatic-systems/rho 8080 ram write swarm
+npx chromatic-systems/rho 8081 ram read swarm <64 byte keys>
+```
+```
+npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local ] <public key>
+```
+
+# Open the browser
+1. http://localhost:8080
+
+# Optional tunnel on the open web
+1. optionally tunnel over cloudflare to connect the old world to the peer-to-peer world
+```
+cloudflared tunnel --name dev --hostname dev.yourdomain.io
+```
+
+# Test
+```sh
+npm test
+```
+
+To run with the debugger
+```sh
+npm run test:i
+```
 
 Web Dev + P2P mesh
-1. Join the mesh with `npx chromatic-systems/rho <port> write | read <publick key>`
 1. moves the server from the cloud to the bookshelf
 1. Directed graph of components via `meta` keys
 1. Many examples with code to learn from
@@ -16,22 +61,16 @@ Web Dev + P2P mesh
 1. no trackers
 1. no PII
 
-# Start
-To install the program
-```sh
-npx chromatic-systems/rho 8080 ram write
-npx chromatic-systems/rho 8081 ram read <64 byte keys>
-```
-
-# Open the browser
-1. http://localhost:8080
-
-
-# Optional tunnel on the open web
-1. optionally tunnel over cloudflare to connect the old world to the peer-to-peer world
-```
-cloudflared tunnel --name dev --hostname dev.yourdomain.io
-```
+# Roadmap
+1. fix `THREE.SphereBufferGeometry has been renamed to THREE.SphereGeometry.` warning
+1. load fulltext from hyperbee stream
+1. code assist with OpenAI Codex `started`
+1. handle etags / caching `started and testing`
+1. add a lock `public key sig`
+1. add api/esm backend then cache to hyperbee
+1. accessible multi language, alt text, tap to use, audio-alts, tab targets
+1. MMO Live coding
+1. fuzz testing
 
 # Architecture
 1. `http` server on top of `hyperbee`
@@ -53,17 +92,8 @@ cloudflared tunnel --name dev --hostname dev.yourdomain.io
 # Recently Added
 1. add template selector to edit page
 1. auto reload on sse event
-1. peer replication `started and testing`
+1. peer replication
 
-# Roadmap
-1. load fulltext from hyperbee stream
-1. code assist with OpenAI Codex `started`
-1. handle etags / caching `started and testing`
-1. add a lock `public key sig`
-1. add api/esm backend then cache to hyperbee
-1. accessible multi language, alt text, tap to use, audio-alts, tab targets
-1. MMO Live coding
-1. fuzz testing
 
 
 # Install

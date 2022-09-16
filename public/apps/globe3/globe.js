@@ -1,6 +1,11 @@
 import Globe from 'globe.gl';
 import * as THREE from 'three';
 
+const globeVizElement = document.getElementById('globeViz');
+// print the width and height of the element
+const w = globeVizElement.clientWidth;
+const h = globeVizElement.clientHeight;
+
 const world = Globe({ animateIn: false })
   (document.getElementById('globeViz'))
   .globeImageUrl('/apps/globe3/blue-marble.jpg')
@@ -9,6 +14,9 @@ const world = Globe({ animateIn: false })
 // Auto-rotate
 world.controls().autoRotate = true;
 world.controls().autoRotateSpeed = 0.35;
+world.pointOfView({ lat: 0, lng: 0, altitude: 4.2 }, 0);
+world.width(w)
+world.height(h);
 
 // Add clouds sphere
 const CLOUDS_ALT = 0.02;

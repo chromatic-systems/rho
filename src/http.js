@@ -90,7 +90,6 @@ class Http {
       return;
     }
 
-    
     // console.log("REQ", req.method, req.url);
     // if req.url ends with a /, replace it with /index.html
     if (req.url.endsWith("/")) {
@@ -117,7 +116,7 @@ class Http {
     // if req is for base.css return the template
     if (req.url === "/base.css") {
       res.setHeader("Content-Type", "text/css");
-      res.end(this.renderTemplates.baseCss());
+      res.end(await this.renderTemplates.baseCss());
       return;
     }
 
@@ -241,7 +240,7 @@ class Http {
   }
 
   async _404(req, res, key) {
-    const html = this.renderTemplates._404(key);
+    const html = await this.renderTemplates._404(key);
     res.writeHead(404, { "Content-Type": "text/html" });
     res.end(html);
   }
@@ -299,12 +298,10 @@ class Http {
     const node = await this.db.get(key);
     if (node) {
       // a simple html page as a string with the key in it
-      const body = this.renderTemplates.navBody(node);
-      const css = this.renderTemplates.baseCss();
-      const html = this.renderTemplates.baseHtml(node.key, body, "", css);
+      const finalHtml = await this.renderTemplates.nav(node);
       const headers = { "Content-Type": node.meta.type };
       res.writeHead(200, headers);
-      res.end(html);
+      res.end(finalHtml);
     } else {
       this._404(req, res, key);
     }
@@ -315,9 +312,9 @@ class Http {
     const nodeAtKey = await this.db.get(key);
     const { meta, value } = nodeAtKey;
     const mime = "text/html";
-    const html = this.renderTemplates.metaDataHtml(key, meta);
+    const finalHtml = await this.renderTemplates.metaDataHtml(nodeAtKey);
     res.writeHead(200, { "Content-Type": mime });
-    res.end(html);
+    res.end(finalHtml);
   }
 
   async handleSymbolDelete(req, res, groups) {
@@ -364,7 +361,6 @@ class Http {
       return true;
     }
 
-    console.log("rendering template", key, meta.template);
     if (meta.template == null) {
       res.writeHead(200, {
         "Content-Type": meta.type,
@@ -383,11 +379,11 @@ class Http {
       res.end(value);
       return true;
     }
-    const html = template(symbol);
+    const finalHtml = await template(symbol);
     res.writeHead(200, {
       "Content-Type": meta.type,
     });
-    res.end(html);
+    res.end(finalHtml);
     return true;
 
     // TODO: load the template from the symbol store
@@ -446,21 +442,7 @@ class Http {
       nodeAtKey.value = "";
     }
 
-    const css = ""
-    const body = this.renderTemplates.editorBody(nodeAtKey);
-    const html = this.renderTemplates.baseHtml(nodeAtKey.key, body, [], css);
-
-    res.writeHead(200, { "Content-Type": "text/html" });
-    res.end(html);
-    return true;
-  }
-
-  async handleEditIndex(req, res, groups) {
-    const key = idGenerator();
-    const nodeAtKey = await this.db.get(key);
-    const css = this.renderTemplates.baseCss();
-    const body = this.renderTemplates.editorBody(nodeAtKey);
-    const html = this.renderTemplates.baseHtml(nodeAtKey.key, body, [], css);
+    const html = await this.renderTemplates.editor(nodeAtKey);
     res.writeHead(200, { "Content-Type": "text/html" });
     res.end(html);
     return true;
@@ -514,7 +496,7 @@ class Http {
         .replace(/”/g, '"');
 
       if(!template) {
-        template = "html";
+        template = "emptyHtml";
       }
     }
 

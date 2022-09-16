@@ -8,7 +8,7 @@ const READING = "read";
 const WRITING = "write";
 
 class SymbolDB {
-  constructor({mem, mode, pubkey, swarm=false}) {
+  constructor({mem, mode, pubkey, swarm="local"}) {
     // verify pubkey is 64 bytes
     const length = pubkey?.length ?? 0;
     if(mode === READING && length !== 64) {
@@ -23,11 +23,14 @@ class SymbolDB {
 
   async startDB() {
     let dbs;
+
+    const startSwarm = this.swarm === "swarm" ? true : false;
+
     if (this.mode === WRITING) {
-       dbs = await writer.start(this.mem, "symbols", this.swarm);
+       dbs = await writer.start(this.mem, "symbols", startSwarm);
     }
     if (this.mode === READING) {
-      dbs = await reader.start(this.mem, this.pubkey);
+      dbs = await reader.start(this.mem, this.pubkey, startSwarm);
     }
 
     this.db = dbs.db 

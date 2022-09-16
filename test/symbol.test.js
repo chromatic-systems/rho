@@ -12,7 +12,7 @@ async function start() {
 
 async function createTwoSymbolNodes({ log, ctx, expect }) {
   ctx.testKey = "test";
-  const writeDB = new SymbolDB({ mem: "ram", mode: "write", pubkey: null });
+  const writeDB = new SymbolDB({ mem: "ram", mode: "write", pubkey: null, swarm: "swarm" });
   const result = await writeDB.startDB();
   expect(writeDB.mode, "write", "mode is write");
   expect(writeDB.mem, "ram", "mem is ram");
@@ -22,6 +22,7 @@ async function createTwoSymbolNodes({ log, ctx, expect }) {
     mem: "ram",
     mode: "read",
     pubkey: result.pubkey,
+    swarm: "swarm",
   });
   await readDB.startDB();
   expect(readDB.mode, "read", "mode is read");

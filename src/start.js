@@ -14,7 +14,7 @@ const __dirname = dirname(__filename)
 const PORTSTRING = process.argv[2] || "8080";
 const STORAGE_TYPE= process.argv[3] || "ram";
 const MODE = process.argv[4] || "read";
-const SWARM = process.argv[5] || false;
+const SWARM = process.argv[5] || "local";
 const PUBKEY = process.argv[6] || "";
 const PORT = parseInt(PORTSTRING);
 const PUBLIC_PATH = join(__dirname, "../public");
@@ -29,8 +29,7 @@ if (PUBKEY) console.log(`PUBKEY: ${PUBKEY}`);
 // START THE DATABASE
 // ========================================================
 // if SWARM is a string, parse it to a boolean else use the default
-const shouldSwarm = SWARM === "true" ? true : false;
-const db = new SymbolDB({ mem: STORAGE_TYPE, mode: MODE, pubkey: PUBKEY, swarm: shouldSwarm });
+const db = new SymbolDB({ mem: STORAGE_TYPE, mode: MODE, pubkey: PUBKEY, swarm: SWARM });
 const {pubkey} = await db.startDB();
 log(ll.info, "START:", `PUBLIC KEY: ${pubkey}`);
 
