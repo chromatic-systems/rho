@@ -65,8 +65,8 @@ async function start(storage, dbName, joinSwarm=false) {
 
 async function stop() {
   await db.close();
-  await swarm.destroy();
   await core.close();
+  if(swarm) await swarm.destroy();
 }
 
 // EXPORT

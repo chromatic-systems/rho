@@ -17,6 +17,7 @@ async function article(symbol) {
   return baseHtml(symbol.key, head, styles, body, postScripts, nav);
 }
 
+
 async function nav(symbol) {
   const { key, meta, value } = symbol;
   const styles = "";
@@ -49,7 +50,7 @@ function headsUpDisplay(symbol, mode) {
     </nav>`;
   } else if (mode === "edit") {
     navElement = html`<nav>
-      <a id="home" href="/">Home</a>
+      <a id="view" href="/${symbol.key}">View</a>
       <a id="nav" href="/n/${symbol.key}">Nav</a>
       <button id="save" tabindex="1" type="submit">Save</button>
     </nav>`;
@@ -68,7 +69,7 @@ async function geometric_algebra(symbol) {
   const head = headHtml(symbol.key, headers);
   const body = html`<article><main>${mainElement}</main></article>
     ${footerElement}`;
-  const nav = headsUpDisplay(symbol, "edit");
+  const nav = headsUpDisplay(symbol, "view");
   return baseHtml(symbol.key, head, styles, body, postScripts, nav);
 }
 
@@ -352,6 +353,77 @@ async function baseCss() {
       --color-shadow: #444;
       --color-background: #000;
       --gradient: linear-gradient(0deg, #dab58e, #e04829, #ffffff);
+      --gradient-green: linear-gradient(45deg, #00711a, #d3eb00);
+      --gradient-blue: linear-gradient(45deg, #81bbf8, #0178a4);
+      --gradient-orange: linear-gradient(45deg, #ff6a00, #ffcc00);
+    }
+
+    .blue-glow {
+      background: var(--gradient-blue);
+      animation: pulse 4s ease-in-out infinite;
+      background-size: 100% 200%;
+      background-position-y: 100%;
+    }
+
+    .orange-glow {
+      background: var(--gradient-orange);
+      animation: pulse 4s ease-in-out infinite;
+      background-size: 100% 200%;
+      background-position-y: 100%;
+    }
+
+    .purple-glow {
+      background-image: var(--gradient);
+      animation: pulse 4s ease-in-out infinite;
+      background-size: 100% 200%;
+      background-position-y: 100%;
+    }
+
+    .green-glow {
+      background-image: var(--gradient-green);
+      animation: pulse 4s ease-in-out infinite;
+      background-size: 100% 200%;
+      background-position-y: 100%;
+    }
+
+    .green {
+      /* color: var(--color-focus); */
+      background-image: var(--gradient-green);
+    }
+
+    .blue {
+      /* color: var(--color-aware); */
+      background-image: var(--gradient-blue);
+    }
+
+    .orange {
+      /* color: var(--color-alert); */
+      background-image: var(--gradient-orange);
+    }
+
+    b {
+      font-weight: 900;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 100% 200%;
+      background-position-y: 100%;
+      border-radius: 0.4rem;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .buy_button {
+      border: none;
+      font-weight: 900;
+      border-radius: 35px;
+      color: rgb(244, 244, 244);
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
     }
 
     html {
@@ -364,7 +436,6 @@ async function baseCss() {
       color: var(--color-text);
       background-color: var(--color-background);
       box-sizing: border-box;
-
       min-height: 100vh;
       min-height: fill-available;
       min-height: -webkit-fill-available;

@@ -3,7 +3,7 @@ import { log, logLevels as ll } from "../src/log.js";
 import { test } from "../src/test.js";
 import * as symbolTest from "./symbol.test.js";
 import * as httpTest from "./http.test.js";
-import * as watchBrowser from "../src/browser.js";
+import watchBrowser from "../src/browser.js";
 import * as file from "../src/file.js";
 import Http from "../src/http.js";
 import SymbolDB from "../src/symbol.js";
@@ -15,14 +15,16 @@ import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { randomUUID } from "node:crypto";
+import { watch } from "chokidar";
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // STATE ========================================
-const HEADLESS = true;
-const SLOWMO = 0;
+const mainBrowser = new watchBrowser({ headless: false, slowMo: 10 });
 const publicPath = join(__dirname, "../public");
+const testWatchPath = join(publicPath, "test");
 const execP = promisify(exec);
 const screenshotSleepTime = 1;
 start();
@@ -30,6 +32,7 @@ start();
 // TEST PLAN ====================================
 async function start() {
   await killServer(8080);
+  await killServer(8083);
 
   // TODO: Something in the symbolTest is conflicting with database startup
   // strange because we are using ram and stopping the previous test
@@ -50,29 +53,12 @@ async function start() {
   // await test("edit a gemotric algebra symbol", editGeometricAlgebra);
   await test("stop the browser", stopBrowser);
   await test("stop the http server", stopHTTP);
-  // await test("spawn the app", spawnApplication);
+  await test("spawn the app", spawnApplication);
+  await test("start test watch", browserTestLoop);
+  // await test("stop the app", stopApplication);
 }
 
-async function editGeometricAlgebra({ ctx, log, expect }) {
-  const page = await ctx.page;
-  const uuid = randomUUID();
-
-  await screenshot(page, "test");
-}
-
-async function editGlobe({ ctx, log, expect }) {
-  const page = await ctx.page;
-  const uuid = randomUUID();
-  await page.goto(`http://localhost:8080/${uuid}`);
-  await page.locator("#edit").click();
-  await sleep(100);
-  await page.keyboard.type("console.log('hello world')");
-  await page.locator('select[name="template"]').selectOption("globe");
-  await page.locator("#save").click();
-  await page.goto(`http://localhost:8080/${uuid}`);
-  await screenshot(page, "test");
-}
-
+// TESTS ========================================
 async function writeSymbolDB({ ctx, log, expect }) {
   const writeDB = new SymbolDB({ mem: "ram", mode: "write", pubkey: null });
   const startResult = await writeDB.startDB();
@@ -124,12 +110,8 @@ async function waitForKey({ log, ctx, expect }) {
 // ========================================================
 // BROWSER TESTS
 // ========================================================
-
 async function startBrowser({ ctx, log, expect }) {
-  const { page, context, browser } = await watchBrowser.startBrowser({
-    headless: HEADLESS,
-    slowMo: SLOWMO,
-  });
+  const { page, context, browser } = await mainBrowser.start();
   await page.evaluate(() => {
     console.error("browser logging attached");
   });
@@ -149,7 +131,6 @@ async function getIndexPage({ ctx, log, expect }) {
 async function get404Page({ ctx, log, expect }) {
   const { page } = ctx;
   const randomKey = randomUUID();
-
   // playwright crashes if HEADLESS is false and it gets an empty 404
   const result = await page.goto(`http://localhost:8080/${randomKey}`);
   expect(result.status(), 404);
@@ -175,8 +156,8 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   await page.keyboard.press("Enter");
   await page.keyboard.up("Meta");
   await page.keyboard.type(`<p>${randomKey}`);
-  await clickSave(page);
   await screenshot(page, "test2");
+  await clickSave(page);
 
   // expect the reader page to be updated via sse
   await screenshot(ssePage, "test");
@@ -184,13 +165,117 @@ async function editEmptySymbolSSE({ log, ctx, expect }) {
   await ssePage.close();
 }
 
+async function editGeometricAlgebra({ ctx, log, expect }) {
+  const page = await ctx.page;
+  const uuid = randomUUID();
+
+  await screenshot(page, "test");
+}
+
+async function editGlobe({ ctx, log, expect }) {
+  const page = await ctx.page;
+  const uuid = randomUUID();
+  await page.goto(`http://localhost:8080/${uuid}`);
+  await page.locator("#edit").click();
+  await sleep(100);
+  await page.keyboard.type("console.log('hello world')");
+  await page.locator('select[name="template"]').selectOption("globe");
+  await page.locator("#save").click();
+  await page.goto(`http://localhost:8080/${uuid}`);
+  await screenshot(page, "test");
+}
+
 async function stopBrowser({ ctx, log, expect }) {
-  await ctx.browser.close();
+  await mainBrowser.stop();
 }
 
 async function stopHTTP({ ctx, log, expect }) {
   await ctx.writeHttp.stop();
   // await ctx.readHttp.stop();
+}
+
+function startChildApp(ctx, log, startPath) {
+  let app = spawn(`node`, [startPath, "8083", "ram", "write", "local"]);
+
+
+  const p = new Promise((resolve, reject) => {
+    app.stdout.on("data", (data) => {
+      const str = data.toString().trim();
+      log(ll.info, "SPAWN:", str);
+
+      const portRegex = /http:\/\/localhost:(\d+)/;
+      if (portRegex.test(str)) {
+        const port = str.match(portRegex)[1];
+        ctx.app = app;
+        ctx.port = port;
+        resolve(app);
+      }
+    });
+    app.stderr.on("data", (data) => {
+      log(ll.alert, "SPAWN:", data.toString());
+    });
+  });
+
+  app.on("close", (code) => {
+    log(ll.info, "SPAWN:", `child process close all stdio with code ${code}`);
+  });
+
+  app.on("exit", (code) => {
+    log(ll.info, "SPAWN:", `child process exited with code ${code}`);
+  });
+
+  return p;
+}
+
+// ========================================================
+// START THE APP IN A SEPARATE PROCESS
+// ========================================================
+async function spawnApplication({ log, ctx, is }) {
+  const startPath = join(__dirname, "../src/start.js");
+  await startChildApp(ctx, log, startPath);
+
+  // ========================================================
+  // WATCH THE SRC DIRECTORY AND RELOAD ON CHANGE
+  // ========================================================
+  let watcher;
+  let lastReload = Date.now();
+  function startWatch(path) {
+    console.log("watching", path);
+    watcher = watch(path, { depth: 0, atomic: true });
+    watcher.on("change", watchHandler);
+    watcher.on("add", watchHandler);
+  }
+
+  async function watchHandler(event, fullPath) {
+    try {
+      if (Date.now() - lastReload < 500) {
+        return;
+      }
+      const extention = event.toString().split(".").pop();
+      const filePath = event.toString();
+      const fileName = filePath.split("/").pop();
+      log(ll.info, "HTTP RELOAD FROM:", fileName);
+      await ctx.app.kill("SIGINT");
+      await startChildApp(ctx, log, startPath);
+      lastReload = Date.now();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  startWatch(join(__dirname, "../src"));
+}
+
+async function browserTestLoop({ log, ctx, expect }) {
+  const watcher = new watchBrowser({ headless: false, slowMo: 10 });
+  await watcher.start();
+  watcher.watch(testWatchPath);
+  await sleep(1000000000);
+}
+
+async function stopApplication({ ctx, log, expect }) {
+  log(ll.info, "PORT:", ctx.port);
+  await ctx.app.kill();
 }
 
 // ========================================================
@@ -254,37 +339,6 @@ async function tapSymbol(page, symbolKey) {
 
 async function tapLink(page, href) {
   await page.click(`a[href='${href}']`);
-}
-
-async function spawnApplication({ log, ctx, is }) {
-  const startPath = "./src/start.js";
-  const childServer = spawn(`node`, [
-    startPath,
-    "8083",
-    "ram",
-    "write",
-    "false",
-  ]);
-  childServer.stdout.on("data", (data) => {
-    const str = data.toString().trim();
-    log(ll.info, "SPAWN:", str);
-  });
-  childServer.stderr.on("data", (data) => {
-    log(ll.alert, "SPAWN:", data.toString());
-  });
-
-  const p = new Promise((resolve, reject) => {
-    childServer.on("close", (code) => {
-      log(ll.info, "SPAWN", `child process close all stdio with code ${code}`);
-      resolve(code);
-    });
-
-    childServer.on("exit", (code) => {
-      log(ll.info, "SPAWN", `child process exited with code ${code}`);
-      resolve(code);
-    });
-  });
-  return p;
 }
 
 async function killServer(port) {

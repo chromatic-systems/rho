@@ -7,8 +7,8 @@
   "scripts": {
     "start": "nodemon -q --config config/start_task.json src/start.js 8080 ram write",
     "start:i": "nodemon -q --inspect --config config/start_task.json src/start.js 8080 ram write",
-    "test": "nodemon -q --config config/html_task.json test/start.test.js",
-    "test:i": "nodemon -q --inspect --config config/html_task.json test/start.test.js"
+    "test": "node test/start.test.js",
+    "test:i": "node --inspect test/start.test.js"
   },
   "author": "timcash",
   "license": "ISC",
@@ -26,6 +26,7 @@
     "openai": "^3.0.0",
     "playwright": "^1.25.1",
     "random-access-memory": "^5.0.0",
+    "screen-size-detector": "^1.0.4",
     "three": "0.136.0",
     "undici": "^5.9.1",
     "urlpattern-polyfill": "^5.0.6"

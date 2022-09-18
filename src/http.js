@@ -527,6 +527,8 @@ class Http {
   }
 
   async stop() {
+    // should we stop the database? What if we want 
+    // to restart http but keep the database on?
     this.server.close();
   }
 }

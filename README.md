@@ -15,10 +15,13 @@
 # Milestone 2: Codex integration
 - codex `basic library working, need integration`
 - navigation `basic page enabled, need user interface`
+- self hosting shadow chrome tab `host is working see browser.js, need to replace browser that starts from start.test.js`
 
 # Milestone 3: Full Text Search
 - full text search 
 see https://github.com/nextapps-de/flexsearch
+- page capture and cache assets
+see playwright 
 
 # Start
 To install the program

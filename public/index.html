@@ -3,30 +3,16 @@
     <meta charset="utf-8" />
     <title>Chromascope</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="/css/cs.css" />
+    <link rel="stylesheet" type="text/css" href="/base.css" />
     <link rel="icon" type="image/png" href="/favicon.ico" />
-    <script type="module" src="/webcom/nav-bar/nav-bar.js"></script>
     <style>
       canvas {
         image-rendering: -moz-crisp-edges;
         image-rendering: -webkit-crisp-edges;
         image-rendering: crisp-edges;
       }
-      article {
-        padding: 15px;
-        width: 100%;
-        height: 100vh;
-        display: flex;
+      footer {
         flex-direction: column;
-      }
-      main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      h2 {
-        font-family: Arial, sans-serif;
       }
     </style>
   </head>
@@ -38,7 +24,7 @@
       </main>
       <footer>
         <p id="turn">1</p>
-        <nav-bar data-key="chromascope"></nav-bar>
+        <a id="symbols" class="buy_button purple-glow" href="/0">Symbols</a>
       </footer>
     </article>
     <article>

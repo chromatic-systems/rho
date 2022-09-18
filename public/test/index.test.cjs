@@ -1,24 +1,45 @@
 const { expect } = require("@playwright/test");
 const { join } = require("node:path");
 
+
 const screenshotPath = join(__dirname, "../screenshots", "test.png");
 
 /**
+ * @param {import("playwright").BrowserContext} ctx
  * @param {import("playwright").Page} page
- * @param {import("playwright").BrowserContext} context
  */
-async function test(page, context) {
-  await page.goto("http://localhost:8081/e/glicol");
+async function test(ctx, page) {
+  await page.goto("http://localhost:8083/");
+  await page.click("#symbols");
   // select all text in the textarea and delete it
-  await page.evaluate(() => {
-    const textarea = document.querySelector("textarea");
-    textarea.focus();
-    textarea.select();
-  }).catch(e => {console.log(e)});
-  // press delete
-  await page.keyboard.press("Delete");
-  await page.type("textarea", message());
-  await page.screenshot({ path: screenshotPath });
+  // focus on the editor
+  await page.click("#edit");
+  let editor = await page.locator("#editor");
+  await clearAndFocus(page);
+  // type in the editor box
+  await page.keyboard.type("<h1>Hello World, I am Tim");
+
+  // click the #save button
+  await page.click("#save");
+  // click the #view button
+  await page.click("#view");
+  // hover the mouse over the #nav button
+  await page.hover("#nav");
+  
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function clearAndFocus(page) {
+  const editor = await page.locator("#editor");
+  await editor.focus();
+  await editor.click();
+  await page.keyboard.down("Meta");
+  await page.keyboard.press("A");
+  await page.keyboard.up("Meta");
+  await page.keyboard.press("Backspace");
 }
 
 function message() {
