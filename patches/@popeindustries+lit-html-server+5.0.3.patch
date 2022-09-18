@@ -1,0 +1,13 @@
+diff --git a/node_modules/@popeindustries/lit-html-server/lit-html-server.js b/node_modules/@popeindustries/lit-html-server/lit-html-server.js
+index d8b87bf..c5e3094 100644
+--- a/node_modules/@popeindustries/lit-html-server/lit-html-server.js
++++ b/node_modules/@popeindustries/lit-html-server/lit-html-server.js
+@@ -90,7 +90,7 @@ function escape(string, context = "text") {
+ import { ElementRenderer } from "./element-renderer.js";
+ function getElementRenderer({ elementRenderers = [] }, tagName, ceClass = customElements.get(tagName)) {
+   if (ceClass === void 0) {
+-    console.warn(`Custom element "${tagName}" was not registered.`);
++    // console.warn(`Custom element "${tagName}" was not registered.`);
+   } else {
+     for (const renderer of elementRenderers) {
+       if (renderer.matchesClass(ceClass, tagName)) {
