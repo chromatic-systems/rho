@@ -52,7 +52,7 @@ function headsUpDisplay(symbol, mode) {
     navElement = html`<nav>
       <a id="view" href="/${symbol.key}">View</a>
       <a id="nav" href="/n/${symbol.key}">Nav</a>
-      <button id="save" tabindex="1" type="submit">Save</button>
+      <button id="save" class="round" tabindex="1" type="submit">Save</button>
     </nav>`;
   }
   return navElement;
@@ -213,7 +213,6 @@ function navBody({ key, meta }) {
 
 function editorBody({ key, meta, value }) {
   return html` <article>
-      <!-- <button id="save" tabindex="3" type="submit">Save</button> -->
       <div class="row">
         <p>Template:</p>
         <select id="template-selector" tabindex="0" name="template">
@@ -319,7 +318,6 @@ async function baseCss() {
       -webkit-user-drag: element;
     }
     select {
-      // styles reset, including removing the default dropdown arrow
       appearance: none;
       -webkit-appearance: none;
       -moz-appearance: none;
@@ -334,11 +332,7 @@ async function baseCss() {
       font-size: inherit;
       cursor: inherit;
       line-height: inherit;
-
-      // Stack above custom arrow
       z-index: 1;
-
-      // Remove focus outline, will add on alternate element
       outline: none;
     }
 
@@ -410,20 +404,6 @@ async function baseCss() {
       background-position-y: 100%;
       border-radius: 0.4rem;
       animation: pulse 4s ease-in-out infinite;
-    }
-
-    .buy_button {
-      border: none;
-      font-weight: 900;
-      border-radius: 35px;
-      color: rgb(244, 244, 244);
-      padding: 15px 32px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 16px;
-      margin: 4px 2px;
-      cursor: pointer;
     }
 
     html {
@@ -515,6 +495,11 @@ async function baseCss() {
       outline: var(--color-border) solid 1px;
     }
 
+    .round {
+      outline : none;
+      border-radius: 25px;
+    }
+
     a:hover {
       background-color: var(--color-focus);
       color: var(--color-background);
@@ -528,22 +513,28 @@ async function baseCss() {
 
     button {
       cursor: pointer;
-      padding: 20px;
-      background-color: var(--color-alert);
-      border-radius: 30px;
+      padding-left: 20px;
+      padding-right: 20px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      border-radius: 0px;
       text-align: center;
       font-size: 1.3em;
+      background: var(--gradient-orange);
+      animation: pulse 4s ease-in-out infinite;
+      background-size: 100% 200%;
+      background-position-y: 100%;
       /* transition 1 sec */
     }
 
     button:hover {
-      background-color: var(--color-focus);
-      color: var(--color-background);
+      background: var(--gradient-blue);
+
     }
 
     button:focus {
-      background-color: var(--color-focus);
-      color: var(--color-background);
+      background: var(--gradient-green);
+
       outline: 3px solid var(--color-border);
     }
 

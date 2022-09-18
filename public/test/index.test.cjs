@@ -25,7 +25,7 @@ async function test(ctx, page) {
   await page.click("#view");
   // hover the mouse over the #nav button
   await page.hover("#nav");
-  
+
 }
 
 function sleep(ms) {
