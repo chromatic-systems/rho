@@ -1,8 +1,56 @@
 # Rho 
-### Computational Media Mesh
+### A Peet-to-Peer Network for Computational Media
+- A school built on mesh networks
+- Move computation & data from the Cloud to Bookshelf
+- Overcomes legacy Education-Tech system limitations
+     1. Centralized certification
+     1. Large high cost content providers
+     1. Centralized data storage
+     1. Data transfer costs
+     1. Your work belongs to a company
 
 ![edit example](./public/images/globe-edit2.png)
 > Live in browser edit example
+
+Geospatial Web Dev School & P2P mesh
+1. Directed graph of components via `meta` keys
+1. Many examples with code to learn from
+1. End to End UX Testing
+1. ML code assistant
+1. Web Crawler
+1. hackable default UI
+1. Core `node:http`
+1. no trackers
+1. no PII
+
+# Start
+To install the program
+```sh
+npx chromatic-systems/rho 8080 ram write swarm
+npx chromatic-systems/rho 8081 ram read swarm <64 byte keys>
+```
+```
+npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local ] <public key>
+```
+
+## Open the browser
+1. http://localhost:8080
+
+## Optional tunnel on the open web
+1. optionally tunnel over cloudflare to connect the old world to the peer-to-peer world
+```
+cloudflared tunnel --name dev --hostname dev.yourdomain.io
+```
+
+## Test
+```sh
+npm test
+```
+
+To run with the debugger
+```sh
+npm run test:i
+```
 
 ![dev log update](./public/images/devlog.png)
 > Dev log update
@@ -22,47 +70,6 @@
 see https://github.com/nextapps-de/flexsearch
 - page capture and cache assets
 see playwright 
-
-# Start
-To install the program
-```sh
-npx chromatic-systems/rho 8080 ram write swarm
-npx chromatic-systems/rho 8081 ram read swarm <64 byte keys>
-```
-```
-npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local ] <public key>
-```
-
-# Open the browser
-1. http://localhost:8080
-
-# Optional tunnel on the open web
-1. optionally tunnel over cloudflare to connect the old world to the peer-to-peer world
-```
-cloudflared tunnel --name dev --hostname dev.yourdomain.io
-```
-
-# Test
-```sh
-npm test
-```
-
-To run with the debugger
-```sh
-npm run test:i
-```
-
-Web Dev + P2P mesh
-1. moves the server from the cloud to the bookshelf
-1. Directed graph of components via `meta` keys
-1. Many examples with code to learn from
-1. Integrated browser Testing
-1. Integrated code assistant
-1. Integrated Web Crawler
-1. hackable default UI
-1. Core `node:http`
-1. no trackers
-1. no PII
 
 # The New Learning Economy: It’s Time To Build in Education
 - https://a16z.com/2022/09/16/the-new-learning-economy-its-time-to-build-in-education/
