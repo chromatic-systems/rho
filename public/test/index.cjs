@@ -5,11 +5,11 @@ const { join } = require("node:path");
 const screenshotPath = join(__dirname, "../screenshots", "test.png");
 
 /**
- * @param {import("playwright").BrowserContext} ctx
+ * @param {import("playwright").BrowserContext} context
  * @param {import("playwright").Page} page
  */
-async function test(ctx, page) {
-  await page.goto("http://localhost:8083/");
+async function test({context, page, host}) {
+  await page.goto(host);
   await page.click("#symbols");
   // select all text in the textarea and delete it
   // focus on the editor
@@ -18,14 +18,13 @@ async function test(ctx, page) {
   await clearAndFocus(page);
   // type in the editor box
   await page.keyboard.type("<h1>Hello World, I am Tim");
-
   // click the #save button
   await page.click("#save");
   // click the #view button
   await page.click("#view");
   // hover the mouse over the #nav button
   await page.hover("#nav");
-
+  
 }
 
 function sleep(ms) {

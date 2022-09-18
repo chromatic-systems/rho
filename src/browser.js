@@ -6,11 +6,12 @@ import { createRequire } from "node:module";
 import { watch } from "chokidar";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
+import { throws } from "node:assert";
 
 const require = createRequire(import.meta.url);
 
 class Browser {
-  constructor({ headless, slowMo = 0, devtools = false }) {
+  constructor({ host, headless, slowMo = 0, devtools = false }) {
     this.browser = null;
     this.context = null;
     this.browserType = "webkit";
@@ -22,6 +23,7 @@ class Browser {
     this.headless = headless;
     this.slowMo = slowMo;
     this.devtools = devtools;
+    this.host = host;
   }
 
   async start() {
@@ -80,7 +82,7 @@ class Browser {
 
     this.watcher = watch(path, { depth: 0, atomic: true });
     this.watcher.on("change", this.watchHandler.bind(this));
-    this.watcher.on("add", this.addWatchHandler.bind(this));
+    this.watcher.on("add", this.watchHandler.bind(this));
   }
 
   async stop() {
@@ -104,28 +106,6 @@ class Browser {
     }
   }
 
-  async addWatchHandler(event) {
-    try {
-      const extention = event.toString().split(".").pop();
-      const filePath = event.toString();
-      if (extention === "cjs") {
-        const fileName = filePath.split("/").pop();
-        this.waitingForUpdate.push(filePath);
-        log(ll.info, "ADDED:", fileName);
-        this.runTest();
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  async sha1ofFile(filePath) {
-    const hash = createHash("sha1");
-    const file = await readFile(filePath);
-    hash.update(file);
-    return hash.digest("hex");
-  }
-
   async runTest() {
     if (this.running) {
       return;
@@ -137,7 +117,7 @@ class Browser {
         const fileName = filePath.split("/").pop();
 
         // check if file has been tested before
-        const sha1 =  await this.sha1ofFile(filePath);
+        const sha1 =  await sha1ofFile(filePath);
         if (this.sha1TestedIndex[filePath] === sha1) {
           return
         }
@@ -145,7 +125,7 @@ class Browser {
         log(ll.info, `TESTING:`, fileName);
         delete require.cache[require.resolve(filePath)];
         const { test } = require(filePath);
-        await test(this.context, this.mainPage);
+        await test({browserContext: this.context, page: this.mainPage, host:this.host});
 
         // add file to tested index
         this.sha1TestedIndex[filePath] = sha1;
@@ -157,6 +137,13 @@ class Browser {
       this.running = false;
     }
   }
+}
+
+async function sha1ofFile(filePath) {
+  const hash = createHash("sha1");
+  const file = await readFile(filePath);
+  hash.update(file);
+  return hash.digest("hex");
 }
 
 export default Browser;

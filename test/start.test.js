@@ -22,7 +22,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // STATE ========================================
-const mainBrowser = new watchBrowser({ headless: false, slowMo: 10 });
+const mainBrowser = new watchBrowser({ host: "http://localhost:8080", headless: false, slowMo: 10 });
 const publicPath = join(__dirname, "../public");
 const testWatchPath = join(publicPath, "test");
 const execP = promisify(exec);
@@ -267,10 +267,9 @@ async function spawnApplication({ log, ctx, is }) {
 }
 
 async function browserTestLoop({ log, ctx, expect }) {
-  const watcher = new watchBrowser({ headless: false, slowMo: 10 });
+  const watcher = new watchBrowser({ host: `http://localhost:${ctx.port}`, headless: false, slowMo: 10 });
   await watcher.start();
   watcher.watch(testWatchPath);
-  await sleep(1000000000);
 }
 
 async function stopApplication({ ctx, log, expect }) {

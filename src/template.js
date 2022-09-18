@@ -524,17 +524,16 @@ async function baseCss() {
       animation: pulse 4s ease-in-out infinite;
       background-size: 100% 200%;
       background-position-y: 100%;
+      color: black;
       /* transition 1 sec */
     }
 
     button:hover {
       background: var(--gradient-blue);
-
     }
 
     button:focus {
       background: var(--gradient-green);
-
       outline: 3px solid var(--color-border);
     }
 
