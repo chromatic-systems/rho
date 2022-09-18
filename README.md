@@ -1,10 +1,12 @@
 # Rho 
 ### A Peet-to-Peer Network for Computational Media
-- A school built on mesh networks
-- Move computation & data from the Cloud to Bookshelf
+1. A school built on mesh networks, End to End encrypted
+1. Integrated Machine Learning assistance, talk to the computer
+2. Move computation & data from the Cloud to Bookshelf, Your portfolio is your data
+1. Publish and ditribute your work in seconds
 - Overcomes legacy Education-Tech system limitations
      1. Centralized certification
-     1. Large high cost content providers
+     1. High cost content providers
      1. Centralized data storage
      1. Data transfer costs
      1. Your work belongs to a company
