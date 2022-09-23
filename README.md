@@ -1,9 +1,9 @@
 # Rho 
 ### A Peet-to-Peer Network for Computational Media
 1. A school built on mesh networks, End to End encrypted
-1. Integrated Machine Learning assistance, talk to the computer
+1. Integrated Machine Learning assistance, create with the computer
 2. Move computation & data from the Cloud to Bookshelf, Your portfolio is your data
-1. Publish and ditribute your work in seconds
+1. Publish and distribute your work worldwide in seconds
 1. Life long team of alumni, mentors, and friends
 - Overcomes legacy Education-Tech system limitations
      1. Centralized certification
