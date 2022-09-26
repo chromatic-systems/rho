@@ -17,7 +17,6 @@ async function article(symbol) {
   return baseHtml(symbol.key, head, styles, body, postScripts, nav);
 }
 
-
 async function nav(symbol) {
   const { key, meta, value } = symbol;
   const styles = "";
@@ -31,7 +30,14 @@ async function nav(symbol) {
 
 async function editor(symbol) {
   const { key, meta, value } = symbol;
-  const styles = "";
+  const styles = html`<style>
+    /* if body is >800px wide change flex direction to row */
+    @media (min-width: 800px) {
+      body {
+        flex-direction: row;
+      }
+    }
+    </style>`;
   const postScripts = "";
   const headers = "";
   const head = headHtml(key, headers);
@@ -58,8 +64,6 @@ function headsUpDisplay(symbol, mode) {
   return navElement;
 }
 
-// document.getElementById("stage1").appendChild(canvas);
-
 async function geometric_algebra(symbol) {
   const styles = "";
   const postScripts = gaScript(symbol);
@@ -67,14 +71,13 @@ async function geometric_algebra(symbol) {
   const footerElement = html`<p id="data1"></p>`;
   const headers = html`<script src="https://unpkg.com/ganja.js"></script>`;
   const head = headHtml(symbol.key, headers);
-  const body = html`<article><main>${mainElement}</main></article>
-    ${footerElement}`;
+  const body = html`<article><main>${mainElement}</main></article>${footerElement}`;
   const nav = headsUpDisplay(symbol, "view");
   return baseHtml(symbol.key, head, styles, body, postScripts, nav);
 }
 
 function gaScript(symbol) {
-  const script = html` <script>
+  const script = html`<script>
     ${symbol.value.toString()};
   </script>`;
   return script;
@@ -212,18 +215,19 @@ function navBody({ key, meta }) {
 }
 
 function editorBody({ key, meta, value }) {
-  return html` <article>
-      <div class="row">
-        <p>Template:</p>
-        <select id="template-selector" tabindex="0" name="template">
-          <option value="article">article</option>
-          <option id="globe-option" value="globe">globe</option>
-          <option value="emptyHtml">emptyHtml</option>
-          <option value="text">text</option>
-          <option value="javascript">javascript</option>
-          <option value="geometric_algebra">geometric_algebra</option>
-        </select>
-      </div>
+  return html`<article>
+    <div class="row">
+      <p>Template:</p>
+      <select id="template-selector" tabindex="0" name="template">
+        <option value="article">article</option>
+        <option id="globe-option" value="globe">globe</option>
+        <option value="emptyHtml">emptyHtml</option>
+        <option value="text">text</option>
+        <option value="javascript">javascript</option>
+        <option value="geometric_algebra">geometric_algebra</option>
+      </select>
+    </div>
+    <input tabindex="2" type="text" name="type" value="${meta.type}" />
       <main>
         <edit-code
           render:client
@@ -233,11 +237,14 @@ function editorBody({ key, meta, value }) {
           data-title="${key}"
           data-save-button-id="save"
           data-template-selector-id="template-selector"
-        ></edit-code>
+        >
+        </edit-code>
       </main>
     </article>
     <article>
-      <input tabindex="2" type="text" name="type" value="${meta.type}" />
+      <main>
+        <iframe id="preview" src="/${key}"></iframe>
+      </main>
     </article>`;
 }
 
@@ -352,6 +359,12 @@ async function baseCss() {
       --gradient-orange: linear-gradient(45deg, #ff6a00, #ffcc00);
     }
 
+    iframe {
+      flex: 1;
+      box-sizing: border-box;
+      border: 0;
+    }
+
     .blue-glow {
       background: var(--gradient-blue);
       animation: pulse 4s ease-in-out infinite;
@@ -424,6 +437,7 @@ async function baseCss() {
       padding: 0;
       margin: 0;
       align-items: center;
+      margin-bottom: 50px;
     }
 
     article {
@@ -601,7 +615,7 @@ async function baseCss() {
       background-size: 100% 200%;
       background-position-y: 100%;
       border-radius: 0.4rem;
-      animation: pulse 4s ease-in-out infinite;
+      animation: pulse 3s ease-in-out infinite;
     }
 
     @keyframes pulse {

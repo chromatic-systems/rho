@@ -6,15 +6,16 @@ import { createRequire } from "node:module";
 import { watch } from "chokidar";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
-import { throws } from "node:assert";
 
 const require = createRequire(import.meta.url);
 
 class Browser {
-  constructor({ host, headless, slowMo = 0, devtools = false }) {
+  constructor({ host, headless, slowMo = 0, devtools = false, height = 800, width = 400, browserType = "chromium" }) {
     this.browser = null;
     this.context = null;
-    this.browserType = "webkit";
+    this.browserType = browserType;
+    this.height = height;
+    this.width = width;
     this.mainPage = null;
     this.watcher = null;
     this.running = false;
@@ -41,7 +42,7 @@ class Browser {
     }
 
     const settings = {
-      viewport: { width: 400, height: 800 },
+      viewport: { width: this.width, height: this.height },
       deviceScaleFactor: 2,
     };
     this.context = await this.browser.newContext({

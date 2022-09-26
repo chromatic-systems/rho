@@ -10,11 +10,14 @@ const screenshotPath = join(__dirname, "../screenshots", "test.png");
  */
 async function test({context, page, host}) {
   await page.goto(host);
+  
   await page.click("#symbols");
   // select all text in the textarea and delete it
+
   // focus on the editor
   await page.click("#edit");
   let editor = await page.locator("#editor");
+
   await clearAndFocus(page);
   // type in the editor box
   await page.keyboard.type("<h1>Hello World, I am Tim");
@@ -24,7 +27,7 @@ async function test({context, page, host}) {
   await page.click("#view");
   // hover the mouse over the #nav button
   await page.hover("#nav");
-  
+  debugger
 }
 
 function sleep(ms) {

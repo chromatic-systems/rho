@@ -22,7 +22,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // STATE ========================================
-const mainBrowser = new watchBrowser({ host: "http://localhost:8080", headless: false, slowMo: 10 });
+const mainBrowser = new watchBrowser({ host: "http://localhost:8080", headless: false, slowMo: 10, devtools: false, height: 1000, width: 1000 });
 const publicPath = join(__dirname, "../public");
 const testWatchPath = join(publicPath, "test");
 const execP = promisify(exec);
@@ -115,6 +115,7 @@ async function startBrowser({ ctx, log, expect }) {
   await page.evaluate(() => {
     console.error("browser logging attached");
   });
+
   ctx.page = page;
   ctx.context = context;
   ctx.browser = browser;
@@ -183,6 +184,11 @@ async function editGlobe({ ctx, log, expect }) {
   await page.locator("#save").click();
   await page.goto(`http://localhost:8080/${uuid}`);
   await screenshot(page, "test");
+  await page.setViewportSize({ width: 400, height: 800 });5
+  await page.reload();
+  await page.setViewportSize({ width: 1000, height: 800 });
+  await page.reload();
+  await screenshot(page, "testbig");
 }
 
 async function stopBrowser({ ctx, log, expect }) {

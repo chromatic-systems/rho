@@ -169,6 +169,7 @@ cloudflared tunnel list
 1. Article: 
 1. Text:
 1. HTML:
+1. Map: https://deck.gl/
 1. Markdown: https://github.com/showdownjs/showdown
 1. Canvas: https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial
 1. Globe: https://chromatic.systems/h3
@@ -179,7 +180,8 @@ cloudflared tunnel list
 1. Timeline:
 1. Table:
 1. cryptography: https://github.com/openpgpjs/openpgpjs
-1. Map: https://deck.gl/
+1. combinatorics: https://github.com/N8Brooks/combinatorics
+1. Mathematica: https://reference.wolfram.com/language/ref/program/wolframscript.html
 1. Image:
 1. Video:
 1. Audio: https://github.com/chaosprint/glicol

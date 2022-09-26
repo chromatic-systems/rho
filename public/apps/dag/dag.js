@@ -86,6 +86,7 @@ var cy = cytoscape({
     },
   ],
 });
+
 // loop over letters A-Z
 var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 for (var i = 0; i < letters.length; i++) {
@@ -94,7 +95,6 @@ for (var i = 0; i < letters.length; i++) {
 }
 
 let count = 30;
-// for loop 100
 let k = setInterval(() => {
   const firstIdx = randIntBetween(0, letters.length - 1);
   var first = letters[firstIdx];
