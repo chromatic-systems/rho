@@ -9,6 +9,7 @@ const screenshotPath = join(__dirname, "../screenshots", "test.png");
  * @param {import("playwright").Page} page
  */
 async function test({context, page, host}) {
+  await page.setViewportSize({ width: 1000, height: 800 });
   await page.goto(host);
   
   await page.click("#symbols");
@@ -27,7 +28,6 @@ async function test({context, page, host}) {
   await page.click("#view");
   // hover the mouse over the #nav button
   await page.hover("#nav");
-  debugger
 }
 
 function sleep(ms) {

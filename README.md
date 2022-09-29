@@ -1,16 +1,20 @@
 # Rho 
 ### A Peet-to-Peer Network for Computational Media
-1. A school built on mesh networks, End to End encrypted
+1. Learn to write software in the context of a Geospatial Publishing System
+1. A school built on mesh networks, 
+1. End to End encrypted video and data
 1. Integrated Machine Learning assistance, create with the computer
 2. Move computation & data from the Cloud to Bookshelf, Your portfolio is your data
 1. Publish and distribute your work worldwide in seconds
-1. Life long team of alumni, mentors, and friends
+1. Team of alumni, mentors, and friends
+1. Funding system for data journalism
+
 - Overcomes legacy Education-Tech system limitations
-     1. Centralized certification
-     1. High cost content providers
-     1. Centralized data storage
-     1. Data transfer costs
-     1. Your work belongs to a company
+1. Centralized certification
+1. High cost content providers
+1. Centralized data storage
+1. Data transfer costs
+1. Your work belongs to a company
 
 ![edit example](./public/images/globe-edit2.png)
 > Live in browser edit example

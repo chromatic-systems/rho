@@ -36,6 +36,10 @@ async function editor(symbol) {
       body {
         flex-direction: row;
       }
+      nav {
+        width: 50%;
+        left: 0;
+      }
     }
     </style>`;
   const postScripts = "";
