@@ -1,32 +1,35 @@
 # Rho 
-### A Peet-to-Peer Network for Computational Media
+> Publish Computational Media to the Planet
+![edit example](./public/images/geotools.png)
+### A Peet-to-Peer Network for Geospatial Media
 1. Learn to write software in the context of a Geospatial Publishing System
-1. A school built on mesh networks, 
+1. A school built on mesh networks 
 1. End to End encrypted video and data
-1. Integrated Machine Learning assistance, create with the computer
-2. Move computation & data from the Cloud to Bookshelf, Your portfolio is your data
+1. Integrated Machine Learning and AI like code assist
+2. Move computation & data from the Cloud to Bookshelf
 1. Publish and distribute your work worldwide in seconds
 1. Team of alumni, mentors, and friends
-1. Funding system for data journalism
+1. Funding system for data journalism & high impact projects
+1. Punches through firewalls and torrents data by key
 
-- Overcomes legacy Education-Tech system limitations
+### Overcomes legacy Education Tech system limitations
 1. Centralized certification
+1. Censorship
 1. High cost content providers
 1. Centralized data storage
 1. Data transfer costs
-1. Your work belongs to a company
+1. A company or school owns your work
 
-![edit example](./public/images/globe-edit2.png)
+![edit example](./public/images/globegl.png)
 > Live in browser edit example
 
-Geospatial Web Dev School & P2P mesh
+## Geospatial Web Dev School & P2P mesh
 1. Directed graph of components via `meta` keys
 1. Many examples with code to learn from
 1. End to End UX Testing
 1. ML code assistant
 1. Web Crawler
 1. hackable default UI
-1. Core `node:http`
 1. no trackers
 1. no PII
 
@@ -34,7 +37,7 @@ Geospatial Web Dev School & P2P mesh
 To install the program
 ```sh
 npx chromatic-systems/rho 8080 ram write swarm
-npx chromatic-systems/rho 8081 ram read swarm <64 byte keys>
+npx chromatic-systems/rho 8081 ram read swarm <64 byte key from a writer>
 ```
 ```
 npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local ] <public key>
@@ -49,7 +52,7 @@ npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local
 cloudflared tunnel --name dev --hostname dev.yourdomain.io
 ```
 
-## Test
+# Test
 ```sh
 npm test
 ```

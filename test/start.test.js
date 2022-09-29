@@ -55,7 +55,7 @@ async function start() {
   await test("stop the http server", stopHTTP);
   await test("spawn the app", spawnApplication);
   await test("start test watch", browserTestLoop);
-  // await test("stop the app", stopApplication);
+  await test("stop the app", stopApplication);
 }
 
 // TESTS ========================================
@@ -269,6 +269,7 @@ async function spawnApplication({ log, ctx, is }) {
     }
   }
 
+  ctx.spawnWatcher = watcher
   startWatch(join(__dirname, "../src"));
 }
 
@@ -280,7 +281,8 @@ async function browserTestLoop({ log, ctx, expect }) {
 
 async function stopApplication({ ctx, log, expect }) {
   log(ll.info, "PORT:", ctx.port);
-  await ctx.app.kill();
+  await ctx.app.kill("SIGINT");
+  process.exit(0);
 }
 
 // ========================================================
