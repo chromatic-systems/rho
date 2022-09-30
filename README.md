@@ -97,15 +97,13 @@ Naysayers may note that education venture funding returns have trailed the retur
 see [strategy](./strategy.md)
 
 # Roadmap
-1. fix `THREE.SphereBufferGeometry has been renamed to THREE.SphereGeometry.` warning
 1. load fulltext from hyperbee stream
 1. code assist with OpenAI Codex `started`
 1. handle etags / caching `started and testing`
 1. add a lock `public key sig`
-1. add api/esm backend then cache to hyperbee
+1. add `module loader esm` backend then cache to hyperbee
 1. accessible multi language, alt text, tap to use, audio-alts, tab targets
 1. MMO Live coding
-1. fuzz testing
 
 # Architecture
 1. `http` server on top of `hyperbee`
@@ -122,35 +120,6 @@ see [strategy](./strategy.md)
 1. all logs are piped togther for devUX
 1. `routes` are defined in `http.js`
 1. `templates` are optionally applied transforms to `symbols` on a HTTP GET request, the current example is `article` which is a `template` on the `edit` page selector
-
-
-# Recently Added
-1. add template selector to edit page
-1. auto reload on sse event
-1. peer replication
-
-
-
-# Install
-```sh
-npm install
-```
-# Test
-```sh
-npm test
-```
-test with debugger
-```sh
-npm run test:i
-```
-
-# Run the server
-note the port and key printed to the console
-```sh
-npm start
-or
-node src/start.js port ram|disk write|read public-key
-```
 
 # Optional Dependencies
 1. OpenAi Codex API key https://beta.openai.com/docs/guides/code
