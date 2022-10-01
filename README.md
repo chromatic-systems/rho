@@ -52,14 +52,26 @@ npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local
 cloudflared tunnel --name dev --hostname dev.yourdomain.io
 ```
 
+
+# Install Local for Development
+```sh
+npm install
+```
 # Test
 ```sh
 npm test
 ```
-
-To run with the debugger
+test with debugger
 ```sh
 npm run test:i
+```
+
+# Run the server
+note the port and key printed to the console
+```sh
+npm start
+or
+node src/start.js port ram|disk write|read public-key
 ```
 
 ![dev log update](./public/images/devlog.png)
@@ -128,29 +140,6 @@ see [strategy](./strategy.md)
 1. add template selector to edit page
 1. auto reload on sse event
 1. peer replication
-
-
-
-# Install
-```sh
-npm install
-```
-# Test
-```sh
-npm test
-```
-test with debugger
-```sh
-npm run test:i
-```
-
-# Run the server
-note the port and key printed to the console
-```sh
-npm start
-or
-node src/start.js port ram|disk write|read public-key
-```
 
 # Optional Dependencies
 1. OpenAi Codex API key https://beta.openai.com/docs/guides/code
