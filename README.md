@@ -1,18 +1,15 @@
 # Rho 
-> Publish Computational Media to the Planet
+> Publish Geospatial Media to the Planet
 ![edit example](./public/images/geotools.png)
 ### A Peet-to-Peer Network for Geospatial Media
-1. Learn to write software in the context of a Geospatial Publishing System
-1. A school built on mesh networks 
+1. Write software in the context of a Geospatial Media
 1. End to End encrypted video and data
 1. Integrated Machine Learning and AI like code assist
 2. Move computation & data from the Cloud to Bookshelf
 1. Publish and distribute your work worldwide in seconds
-1. Team of alumni, mentors, and friends
-1. Funding system for data journalism & high impact projects
 1. Punches through firewalls and torrents data by key
 
-### Overcomes legacy Education Tech system limitations
+### Overcome Legacy system limitations
 1. Centralized certification
 1. Censorship
 1. High cost content providers
@@ -36,16 +33,21 @@
 # Start
 To install the program
 ```sh
+# To create a writeable node
 npx chromatic-systems/rho 8080 ram write swarm
+# Note the `Public Key` printed to the console
+
+# To create a read only node
 npx chromatic-systems/rho 8081 ram read swarm <64 byte key from a writer>
+
+# Open a browser to http://localhost:8080
+# Or whatever port you chose above
 ```
+
+### Options
 ```
 npx chromatic-systems/rho <port> [ ram | disk ] [ write | read ] [ swarm | local ] <public key>
 ```
-
-## Open the browser
-1. http://localhost:8080
-
 ## Optional tunnel on the open web
 1. optionally tunnel over cloudflare to connect the old world to the peer-to-peer world
 ```
@@ -64,14 +66,6 @@ npm test
 test with debugger
 ```sh
 npm run test:i
-```
-
-# Run the server
-note the port and key printed to the console
-```sh
-npm start
-or
-node src/start.js port ram|disk write|read public-key
 ```
 
 ![dev log update](./public/images/devlog.png)
