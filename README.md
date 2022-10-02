@@ -9,13 +9,16 @@
 1. Publish and distribute your work worldwide in seconds
 1. Punches through firewalls and torrents data by key
 
+# Co-Projects
+Check out this soil data project:
+https://github.com/mejia-code/soil_data_research
+
+
 ### Overcome Legacy system limitations
 1. Centralized certification
-1. Censorship
 1. High cost content providers
 1. Centralized data storage
 1. Data transfer costs
-1. A company or school owns your work
 
 ![edit example](./public/images/globegl.png)
 > Live in browser edit example
